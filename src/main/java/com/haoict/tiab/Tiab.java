@@ -38,7 +38,7 @@ public class Tiab
     // Register ourselves for server and other game events we are interested in
     MinecraftForge.EVENT_BUS.register(this);
 
-    RegistryHandler.init();
+    ItemRegistryHandler.init();
   }
 
   private void setup(final FMLCommonSetupEvent event)
@@ -46,6 +46,8 @@ public class Tiab
     // some preinit code
     LOGGER.info("HELLO FROM PREINIT");
     LOGGER.info("DIRT BLOCK >> {}", Blocks.DIRT.getRegistryName());
+
+    MinecraftForge.EVENT_BUS.register(CommandEventRegistryHandler.class);
   }
 
   private void doClientStuff(final FMLClientSetupEvent event) {

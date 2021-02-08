@@ -7,6 +7,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -31,23 +32,36 @@ public class ItemTimeInABottle<THIRTY_SECONDS> extends Item {
   // Happy birthday notes
   private static final String[] NOTES = {"G", "G", "A", "G", "C", "B", "G", "G", "A", "G", "D", "C"};
   private static final int THIRTY_SECONDS = Config.TICK_CONST * Config.EFFECTIVE_EACH_USE_DURATION;
+  private static final String TIME_DATA_TAG = "timeData";
+  private static final String STORED_TIME_KEY = "storedTime";
 
   public ItemTimeInABottle() {
     super(new Properties().group(ItemGroup.MISC).maxStackSize(1));
   }
 
+  public static int getStoredTime(ItemStack is) {
+    CompoundNBT timeData = is.getChildTag(TIME_DATA_TAG);
+    int timeAvailable = timeData.getInt(STORED_TIME_KEY);
+    return timeAvailable;
+  }
+
+  public static void setStoredTime(ItemStack is, int time) {
+    CompoundNBT timeData = is.getChildTag(TIME_DATA_TAG);
+    timeData.putInt(STORED_TIME_KEY, time);
+  }
+
   @Override
   @OnlyIn(Dist.CLIENT)
   public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
-    CompoundNBT nbtTagCompound = stack.getOrCreateChildTag("timeData");
+    CompoundNBT nbtTagCompound = stack.getOrCreateChildTag(TIME_DATA_TAG);
 
-    int storedTime = nbtTagCompound.getInt("storedTime");
+    int storedTime = nbtTagCompound.getInt(STORED_TIME_KEY);
     int storedSeconds = storedTime / Config.TICK_CONST;
     int hours = storedSeconds / 3600;
     int minutes = (storedSeconds % 3600) / 60;
     int seconds = storedSeconds % 60;
 
-    tooltip.add(new StringTextComponent(I18n.format("item.tiab.timeinabottle.desc", hours, minutes, seconds)));
+    tooltip.add(new StringTextComponent(I18n.format("item.tiab.timeinabottle.desc", hours, String.format("%02d", minutes), String.format("%02d", seconds))));
   }
 
   @Override
@@ -58,8 +72,29 @@ public class ItemTimeInABottle<THIRTY_SECONDS> extends Item {
     }
 
     if (worldIn.getWorldInfo().getGameTime() % Config.TICK_CONST == 0) {
-      CompoundNBT nbtTagCompound = stack.getOrCreateChildTag("timeData");
-      nbtTagCompound.putInt("storedTime", nbtTagCompound.getInt("storedTime") + 20);
+      CompoundNBT nbtTagCompound = stack.getOrCreateChildTag(TIME_DATA_TAG);
+      nbtTagCompound.putInt(STORED_TIME_KEY, nbtTagCompound.getInt(STORED_TIME_KEY) + 20);
+    }
+
+    // remove time if player has other TIAB item in his inventory
+    if (worldIn.getWorldInfo().getGameTime() % (Config.TICK_CONST * 10) == 0) {
+      if (!(entityIn instanceof PlayerEntity)) {
+        return;
+      }
+
+      PlayerEntity player = (PlayerEntity) entityIn;
+
+      for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
+        ItemStack invStack = player.inventory.getStackInSlot(i);
+        if (invStack.getItem() == this && invStack != stack) {
+          int otherTimeData = invStack.getOrCreateChildTag(TIME_DATA_TAG).getInt(STORED_TIME_KEY);
+          int myTimeData = stack.getOrCreateChildTag(TIME_DATA_TAG).getInt(STORED_TIME_KEY);
+
+          if (myTimeData < otherTimeData) {
+            setStoredTime(stack, 0);
+          }
+        }
+      }
     }
   }
 
@@ -86,10 +121,6 @@ public class ItemTimeInABottle<THIRTY_SECONDS> extends Item {
     Optional<EntityTimeAccelerator> o = context.getWorld().getEntitiesWithinAABB(EntityTimeAccelerator.class, new AxisAlignedBB(pos).shrink(0.2)).stream().findFirst();
 
     if (o.isPresent()) {
-      /*Minecraft mc = Minecraft.getMinecraft();
-      mc.player.sendChatMessage(o.toString());
-      context.getPlayer().sendStatusMessage(new StringTextComponent("Already in acceleration progress"),  true);*/
-
       EntityTimeAccelerator entityTA = o.get();
       int currentRate = entityTA.getTimeRate();
       int usedUpTime = THIRTY_SECONDS - entityTA.getRemainingTime();
@@ -127,7 +158,7 @@ public class ItemTimeInABottle<THIRTY_SECONDS> extends Item {
     return ActionResultType.SUCCESS;
   }
 
-  public void playSound(World world, BlockPos pos,int nextRate) {
+  public void playSound(World world, BlockPos pos, int nextRate) {
     switch (nextRate) {
       case 1:
         PlaySound.playNoteBlockHarpSound(world, pos, NOTES[0]);
@@ -171,16 +202,5 @@ public class ItemTimeInABottle<THIRTY_SECONDS> extends Item {
   @Override
   public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
     return !ItemStack.areItemsEqual(oldStack, newStack);
-  }
-
-  public static int getStoredTime(ItemStack is) {
-    CompoundNBT timeData = is.getChildTag("timeData");
-    int timeAvailable = timeData.getInt("storedTime");
-    return timeAvailable;
-  }
-
-  public static void setStoredTime(ItemStack is, int time) {
-    CompoundNBT timeData = is.getChildTag("timeData");
-    timeData.putInt("storedTime", time);
   }
 }

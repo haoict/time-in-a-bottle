@@ -1,4 +1,4 @@
 {
   "item.tiab.timeinabottle": "Time in a bottle",
-  "item.tiab.timeinabottle.desc": "%d H | %d M | %d S"
+  "item.tiab.timeinabottle.desc": "Stored time %s:%s:%s"
 }
