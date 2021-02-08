@@ -1,5 +1,6 @@
 package com.haoict.tiab.commands;
 
+import com.haoict.tiab.Config;
 import com.haoict.tiab.item.ItemTimeInABottle;
 import com.haoict.tiab.utils.SendMessage;
 import com.mojang.brigadier.CommandDispatcher;
@@ -26,10 +27,14 @@ public class TiabCommands {
                   if (!messageValue.getString().isEmpty()) {
                     try {
                       int timeToAdd = Integer.parseInt(messageValue.getString());
+
+                      if (timeToAdd > 31104000) {
+                        timeToAdd = 31104000;
+                      }
                       ItemStack currentItem = player.inventory.getCurrentItem();
 
                       if (currentItem.getItem() instanceof ItemTimeInABottle) {
-                        ItemTimeInABottle.setStoredTime(currentItem, ItemTimeInABottle.getStoredTime(currentItem) + timeToAdd);
+                        ItemTimeInABottle.setStoredTime(currentItem, ItemTimeInABottle.getStoredTime(currentItem) + timeToAdd * Config.TICK_CONST);
                         SendMessage.sendMessage("Added " + timeToAdd + " seconds");
                       } else {
                         SendMessage.sendMessage("You need to hold Time in a bottle to use this command");

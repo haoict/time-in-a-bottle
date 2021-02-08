@@ -29,14 +29,21 @@ public class EntityTimeAccelerator extends Entity implements IEntityAdditionalSp
   }
 
   public EntityTimeAccelerator(World worldIn, BlockPos pos, double posX, double posY, double posZ) {
-    this(EntityType.ITEM, worldIn);
+    this(TiabEntityTypes.timeAcceleratorEntityType, worldIn);
     this.pos = pos;
     this.setPosition(posX, posY, posZ);
   }
 
   @Override
-  public void baseTick() {
-    super.baseTick();
+  public void tick() {
+    super.tick();
+
+    if (pos == null) {
+      if (!world.isRemote) {
+        this.setDead();
+      }
+      return;
+    }
 
     BlockState blockState = world.getBlockState(pos);
     ServerWorld serverWorld = world.getServer().getWorld(world.getDimensionKey());
@@ -54,7 +61,7 @@ public class EntityTimeAccelerator extends Entity implements IEntityAdditionalSp
     }
 
     this.remainingTime -= 1;
-    if (this.remainingTime == 0 && !this.world.isRemote) {
+    if (this.remainingTime <= 0 && !this.world.isRemote) {
       this.setDead();
     }
   }

@@ -28,7 +28,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 
-public class ItemTimeInABottle<THIRTY_SECONDS> extends Item {
+public class ItemTimeInABottle extends Item {
   // Happy birthday notes
   private static final String[] NOTES = {"G", "G", "A", "G", "C", "B", "G", "G", "A", "G", "D", "C"};
   private static final int THIRTY_SECONDS = Config.TICK_CONST * Config.EFFECTIVE_EACH_USE_DURATION;
@@ -47,7 +47,8 @@ public class ItemTimeInABottle<THIRTY_SECONDS> extends Item {
 
   public static void setStoredTime(ItemStack is, int time) {
     CompoundNBT timeData = is.getChildTag(TIME_DATA_TAG);
-    timeData.putInt(STORED_TIME_KEY, time);
+    int newStoredTime = time > 622080000 ? 622080000 : time;
+    timeData.putInt(STORED_TIME_KEY, newStoredTime);
   }
 
   @Override
@@ -73,7 +74,10 @@ public class ItemTimeInABottle<THIRTY_SECONDS> extends Item {
 
     if (worldIn.getWorldInfo().getGameTime() % Config.TICK_CONST == 0) {
       CompoundNBT nbtTagCompound = stack.getOrCreateChildTag(TIME_DATA_TAG);
-      nbtTagCompound.putInt(STORED_TIME_KEY, nbtTagCompound.getInt(STORED_TIME_KEY) + 20);
+      int storedTime = nbtTagCompound.getInt(STORED_TIME_KEY);
+      if (storedTime < 622080000) {
+        nbtTagCompound.putInt(STORED_TIME_KEY, storedTime + 20);
+      }
     }
 
     // remove time if player has other TIAB item in his inventory
@@ -101,14 +105,10 @@ public class ItemTimeInABottle<THIRTY_SECONDS> extends Item {
   @Override
   public ActionResultType onItemUse(ItemUseContext context) {
     World world = context.getWorld();
+
     if (world.isRemote) {
       return ActionResultType.PASS;
     }
-
-    int nextRate = 1;
-    int timeRequired = THIRTY_SECONDS;
-    int timeAvailable = getStoredTime(context.getItem());
-    boolean isCreativeMode = context.getPlayer().abilities.isCreativeMode;
 
     BlockPos pos = context.getPos();
     BlockState blockState = world.getBlockState(pos);
@@ -117,6 +117,11 @@ public class ItemTimeInABottle<THIRTY_SECONDS> extends Item {
     if (!blockState.ticksRandomly() && (targetTE == null || !(targetTE instanceof ITickableTileEntity))) {
       return ActionResultType.FAIL;
     }
+
+    int nextRate = 1;
+    int timeRequired = THIRTY_SECONDS;
+    int timeAvailable = getStoredTime(context.getItem());
+    boolean isCreativeMode = context.getPlayer().abilities.isCreativeMode;
 
     Optional<EntityTimeAccelerator> o = context.getWorld().getEntitiesWithinAABB(EntityTimeAccelerator.class, new AxisAlignedBB(pos).shrink(0.2)).stream().findFirst();
 
