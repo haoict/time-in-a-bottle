@@ -30,7 +30,7 @@ import java.util.Optional;
 
 public class ItemTimeInABottle extends Item {
   // Happy birthday notes
-  private static final String[] NOTES = {"G", "G", "A", "G", "C", "B", "G", "G", "A", "G", "D", "C"};
+  private static final String[] NOTES = {"C", "D", "E", "F", "G2", "A2", "B2", "C2"};
   private static final int THIRTY_SECONDS = Config.TICK_CONST * Config.EFFECTIVE_EACH_USE_DURATION;
   private static final String TIME_DATA_TAG = "timeData";
   private static final String STORED_TIME_KEY = "storedTime";
@@ -47,7 +47,7 @@ public class ItemTimeInABottle extends Item {
 
   public static void setStoredTime(ItemStack is, int time) {
     CompoundNBT timeData = is.getChildTag(TIME_DATA_TAG);
-    int newStoredTime = time > 622080000 ? 622080000 : time;
+    int newStoredTime = time > Config.MAX_STORED_TIME ? Config.MAX_STORED_TIME : time;
     timeData.putInt(STORED_TIME_KEY, newStoredTime);
   }
 
@@ -62,7 +62,7 @@ public class ItemTimeInABottle extends Item {
     int minutes = (storedSeconds % 3600) / 60;
     int seconds = storedSeconds % 60;
 
-    tooltip.add(new StringTextComponent(I18n.format("item.tiab.timeinabottle.desc", hours, String.format("%02d", minutes), String.format("%02d", seconds))));
+    tooltip.add(new StringTextComponent(I18n.format("item.tiab.timeinabottle.tooltip", hours, String.format("%02d", minutes), String.format("%02d", seconds))));
   }
 
   @Override
@@ -75,8 +75,8 @@ public class ItemTimeInABottle extends Item {
     if (worldIn.getWorldInfo().getGameTime() % Config.TICK_CONST == 0) {
       CompoundNBT nbtTagCompound = stack.getOrCreateChildTag(TIME_DATA_TAG);
       int storedTime = nbtTagCompound.getInt(STORED_TIME_KEY);
-      if (storedTime < 622080000) {
-        nbtTagCompound.putInt(STORED_TIME_KEY, storedTime + 20);
+      if (storedTime < Config.MAX_STORED_TIME) {
+        nbtTagCompound.putInt(STORED_TIME_KEY, storedTime + Config.TICK_CONST);
       }
     }
 

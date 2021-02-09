@@ -7,6 +7,9 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.IPacket;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -18,14 +21,14 @@ import net.minecraftforge.fml.network.NetworkHooks;
 import javax.annotation.Nonnull;
 
 public class EntityTimeAccelerator extends Entity implements IEntityAdditionalSpawnData {
-  private int timeRate;
+  private static final DataParameter<Integer> TIME_RATE = EntityDataManager.<Integer> createKey(EntityTimeAccelerator.class, DataSerializers.VARINT);
   private int remainingTime;
   private BlockPos pos;
 
   public EntityTimeAccelerator(EntityType entityType, World worldIn) {
     super(entityType, worldIn);
     this.noClip = true;
-    this.timeRate = 1;
+    this.dataManager.register(TIME_RATE, 1);
   }
 
   public EntityTimeAccelerator(World worldIn, BlockPos pos, double posX, double posY, double posZ) {
@@ -104,11 +107,11 @@ public class EntityTimeAccelerator extends Entity implements IEntityAdditionalSp
   }
 
   public int getTimeRate() {
-    return this.timeRate;
+    return this.dataManager.get(TIME_RATE);
   }
 
   public void setTimeRate(int timeRate) {
-    this.timeRate = timeRate;
+    this.dataManager.set(TIME_RATE, timeRate);
   }
 
   public int getRemainingTime() {

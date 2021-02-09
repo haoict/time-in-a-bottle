@@ -28,8 +28,8 @@ public class TiabCommands {
                     try {
                       int timeToAdd = Integer.parseInt(messageValue.getString());
 
-                      if (timeToAdd > 31104000) {
-                        timeToAdd = 31104000;
+                      if (timeToAdd > Config.MAX_STORED_TIME / 20) {
+                        timeToAdd = Config.MAX_STORED_TIME / 20;
                       }
                       ItemStack currentItem = player.inventory.getCurrentItem();
 
