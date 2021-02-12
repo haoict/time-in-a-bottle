@@ -1,21 +1,15 @@
 package com.haoict.tiab;
 
-import com.haoict.tiab.commands.TiabCommands;
+import com.haoict.tiab.client.ClientProxy;
 import com.haoict.tiab.entities.TiabEntityTypes;
-import com.haoict.tiab.item.ItemTimeInABottle;
-import com.haoict.tiab.renderer.EntityTimeAcceleratorRenderer;
-import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
-import net.minecraft.command.CommandSource;
 import net.minecraft.entity.EntityType;
-import net.minecraft.item.Item;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.InterModComms;
-import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -23,8 +17,6 @@ import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -49,9 +41,10 @@ public class Tiab {
     // Register ourselves for server and other game events we are interested in
     MinecraftForge.EVENT_BUS.register(this);
 
-    MinecraftForge.EVENT_BUS.register(CommandEventRegistryHandler.class);
+    DistExecutor.safeRunForDist(() -> ClientProxy::new, () -> CommonProxy::new);
 
     ItemRegistryHandler.init();
+    MinecraftForge.EVENT_BUS.register(CommandEventRegistryHandler.class);
   }
 
   private void setup(final FMLCommonSetupEvent event) {
@@ -63,8 +56,6 @@ public class Tiab {
   private void doClientStuff(final FMLClientSetupEvent event) {
     // do something that can only be done on the client
     LOGGER.info("Got game settings {}", event.getMinecraftSupplier().get().gameSettings);
-
-    RenderingRegistry.registerEntityRenderingHandler(TiabEntityTypes.timeAcceleratorEntityType, erm -> new EntityTimeAcceleratorRenderer(erm));
   }
 
   private void enqueueIMC(final InterModEnqueueEvent event) {

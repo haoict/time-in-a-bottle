@@ -35,16 +35,16 @@ public class TiabCommands {
 
                       if (currentItem.getItem() instanceof ItemTimeInABottle) {
                         ItemTimeInABottle.setStoredTime(currentItem, ItemTimeInABottle.getStoredTime(currentItem) + timeToAdd * Config.TICK_CONST);
-                        SendMessage.sendMessage("Added " + timeToAdd + " seconds");
+                        SendMessage.sendMessage(player, "Added " + timeToAdd + " seconds");
                       } else {
-                        SendMessage.sendMessage("You need to hold Time in a bottle to use this command");
+                        SendMessage.sendMessage(player, "You need to hold Time in a bottle to use this command");
                       }
                       return 1;
                     } catch (NumberFormatException ex) {
-                      SendMessage.sendMessage("Invalid time parameter!");
+                      SendMessage.sendMessage(player, "Invalid time parameter!");
                     }
                   } else {
-                    SendMessage.sendMessage("Empty time parameter!");
+                    SendMessage.sendMessage(player, "Empty time parameter!");
                   }
                   return 0;
                 })

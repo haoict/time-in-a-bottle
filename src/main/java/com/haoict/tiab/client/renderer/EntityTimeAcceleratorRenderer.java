@@ -1,4 +1,4 @@
-package com.haoict.tiab.renderer;
+package com.haoict.tiab.client.renderer;
 
 import com.haoict.tiab.entities.EntityTimeAccelerator;
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -14,9 +14,12 @@ import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.awt.*;
 
+@OnlyIn(Dist.CLIENT)
 public class EntityTimeAcceleratorRenderer extends EntityRenderer<EntityTimeAccelerator> {
   public EntityTimeAcceleratorRenderer(EntityRendererManager erm) {
     super(erm);
