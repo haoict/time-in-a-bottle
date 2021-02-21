@@ -10,4 +10,5 @@ public class Config {
   public static final int MAX_TIME_RATE_POWER = 7; // corresponding to times faster: 2^5=32, 2^11=2048
   public static final int AVERAGE_UPDATE_RANDOM_TICK = 1365; // On average, blocks are updated every 68.27 seconds (1365.33 game ticks)... https://minecraft.gamepedia.com/Tick#Random_tick
   public static final int MAX_STORED_TIME = 622080000; // max stored time in tick
+  public static final int MAX_STORED_FE = 622080000;
 }

@@ -1,5 +1,6 @@
 package com.haoict.tiab;
 
+import com.haoict.tiab.item.ItemTimeInABottleFE;
 import com.haoict.tiab.item.ItemTimeInABottle;
 import net.minecraft.item.Item;
 import net.minecraftforge.fml.RegistryObject;
@@ -12,6 +13,7 @@ public class ItemRegistryHandler {
   public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, Config.MOD_ID);
   // register item
   public static final RegistryObject<Item> BOTTLE = ITEMS.register("timeinabottle", () -> new ItemTimeInABottle());
+  public static final RegistryObject<Item> BOTTLE_FE = ITEMS.register("timeinabottlefe", () -> new ItemTimeInABottleFE());
 
   public static void init() {
     // attach DeferredRegister to the event bus
