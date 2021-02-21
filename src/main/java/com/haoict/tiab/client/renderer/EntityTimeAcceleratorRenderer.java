@@ -1,6 +1,6 @@
 package com.haoict.tiab.client.renderer;
 
-import com.haoict.tiab.entities.EntityTimeAccelerator;
+import com.haoict.tiab.common.entities.EntityTimeAccelerator;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.Minecraft;

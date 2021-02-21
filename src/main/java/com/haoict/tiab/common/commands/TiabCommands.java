@@ -1,14 +1,16 @@
-package com.haoict.tiab.commands;
+package com.haoict.tiab.common.commands;
 
-import com.haoict.tiab.Config;
-import com.haoict.tiab.item.ItemTimeInABottle;
-import com.haoict.tiab.utils.SendMessage;
+import com.haoict.tiab.common.items.ItemTimeInABottle;
+import com.haoict.tiab.common.utils.SendMessage;
+import com.haoict.tiab.config.Constants;
+import com.haoict.tiab.config.TiabConfig;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.command.arguments.MessageArgument;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 
@@ -28,13 +30,15 @@ public class TiabCommands {
                     try {
                       int timeToAdd = Integer.parseInt(messageValue.getString());
 
-                      if (timeToAdd > Config.MAX_STORED_TIME / 20) {
-                        timeToAdd = Config.MAX_STORED_TIME / 20;
+                      if (timeToAdd > TiabConfig.COMMON.maxStoredTime.get() / 20) {
+                        timeToAdd = TiabConfig.COMMON.maxStoredTime.get() / 20;
                       }
                       ItemStack currentItem = player.inventory.getCurrentItem();
+                      Item item = currentItem.getItem();
 
-                      if (currentItem.getItem() instanceof ItemTimeInABottle) {
-                        ItemTimeInABottle.setStoredTime(currentItem, ItemTimeInABottle.getStoredTime(currentItem) + timeToAdd * Config.TICK_CONST);
+                      if (item instanceof ItemTimeInABottle) {
+                        ItemTimeInABottle itemTiab = (ItemTimeInABottle) item;
+                        itemTiab.setStoredEnergy(currentItem, itemTiab.getStoredEnergy(currentItem) + timeToAdd * Constants.TICK_CONST);
                         SendMessage.sendMessage(player, "Added " + timeToAdd + " seconds");
                       } else {
                         SendMessage.sendMessage(player, "You need to hold Time in a bottle to use this command");
