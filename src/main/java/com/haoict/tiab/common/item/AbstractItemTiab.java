@@ -1,8 +1,9 @@
 package com.haoict.tiab.common.item;
 
-import com.haoict.tiab.common.Config;
 import com.haoict.tiab.common.entities.EntityTimeAccelerator;
 import com.haoict.tiab.common.utils.PlaySound;
+import com.haoict.tiab.config.Constants;
+import com.haoict.tiab.config.TiabConfig;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -20,8 +21,8 @@ import javax.annotation.Nonnull;
 import java.util.Optional;
 
 public abstract class AbstractItemTiab extends Item {
-  private static final int THIRTY_SECONDS = Config.TICK_CONST * Config.EFFECTIVE_EACH_USE_DURATION;
-  private static final String[] NOTES = {"C", "D", "E", "F", "G2", "A2", "B2", "C2"};
+  private static final int THIRTY_SECONDS = Constants.TICK_CONST * TiabConfig.COMMON.eachUseDuration.get();
+  private static final String[] NOTES = {"C", "D", "E", "F", "G2", "A2", "B2", "C2", "D2", "E2", "F2"};
 
   public AbstractItemTiab() {
     super(new Properties().group(ItemGroup.MISC).maxStackSize(1));
@@ -57,7 +58,7 @@ public abstract class AbstractItemTiab extends Item {
       int currentRate = entityTA.getTimeRate();
       int usedUpTime = THIRTY_SECONDS - entityTA.getRemainingTime();
 
-      if (currentRate >= Math.pow(2, Config.MAX_TIME_RATE_POWER)) {
+      if (currentRate >= Math.pow(2, TiabConfig.COMMON.maxTimeRatePower.get())) {
         return ActionResultType.SUCCESS;
       }
 
@@ -137,12 +138,8 @@ public abstract class AbstractItemTiab extends Item {
       case 512:
         PlaySound.playNoteBlockHarpSound(world, pos, NOTES[9]);
         break;
-      case 1024:
+      default:
         PlaySound.playNoteBlockHarpSound(world, pos, NOTES[10]);
-        break;
-      case 2048:
-        PlaySound.playNoteBlockHarpSound(world, pos, NOTES[11]);
-        break;
     }
   }
 

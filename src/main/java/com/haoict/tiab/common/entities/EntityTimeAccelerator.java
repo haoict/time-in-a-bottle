@@ -1,6 +1,6 @@
 package com.haoict.tiab.common.entities;
 
-import com.haoict.tiab.common.Config;
+import com.haoict.tiab.config.TiabConfig;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -21,7 +21,7 @@ import net.minecraftforge.fml.network.NetworkHooks;
 import javax.annotation.Nonnull;
 
 public class EntityTimeAccelerator extends Entity implements IEntityAdditionalSpawnData {
-  private static final DataParameter<Integer> TIME_RATE = EntityDataManager.<Integer> createKey(EntityTimeAccelerator.class, DataSerializers.VARINT);
+  private static final DataParameter<Integer> TIME_RATE = EntityDataManager.createKey(EntityTimeAccelerator.class, DataSerializers.VARINT);
   private int remainingTime;
   private BlockPos pos;
 
@@ -57,7 +57,7 @@ public class EntityTimeAccelerator extends Entity implements IEntityAdditionalSp
       if (targetTE != null && targetTE instanceof ITickableTileEntity) {
         ((ITickableTileEntity) targetTE).tick();
       } else {
-        if (serverWorld != null && blockState.ticksRandomly() && world.rand.nextInt(Config.AVERAGE_UPDATE_RANDOM_TICK) == 0) {
+        if (serverWorld != null && blockState.ticksRandomly() && world.rand.nextInt(TiabConfig.COMMON.averageUpdateRandomTick.get()) == 0) {
           blockState.randomTick(serverWorld, pos, world.rand);
         }
       }

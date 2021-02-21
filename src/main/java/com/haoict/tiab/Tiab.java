@@ -3,9 +3,10 @@ package com.haoict.tiab;
 import com.haoict.tiab.client.ClientProxy;
 import com.haoict.tiab.common.CommandEventRegistryHandler;
 import com.haoict.tiab.common.CommonProxy;
-import com.haoict.tiab.common.Config;
 import com.haoict.tiab.common.ItemRegistryHandler;
 import com.haoict.tiab.common.entities.TiabEntityTypes;
+import com.haoict.tiab.config.Constants;
+import com.haoict.tiab.config.TiabConfig;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
@@ -27,12 +28,14 @@ import org.apache.logging.log4j.Logger;
 import java.util.stream.Collectors;
 
 // The value here should match an entry in the META-INF/mods.toml file
-@Mod(Config.MOD_ID)
+@Mod(Constants.MOD_ID)
 public class Tiab {
   // Directly reference a log4j logger.
   private static final Logger LOGGER = LogManager.getLogger();
 
   public Tiab() {
+    TiabConfig.init();
+
     // Register the setup method for modloading
     FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
     // Register the enqueueIMC method for modloading
@@ -44,6 +47,7 @@ public class Tiab {
 
     // Register ourselves for server and other game events we are interested in
     MinecraftForge.EVENT_BUS.register(this);
+
 
     DistExecutor.safeRunForDist(() -> ClientProxy::new, () -> CommonProxy::new);
 
@@ -64,7 +68,7 @@ public class Tiab {
 
   private void enqueueIMC(final InterModEnqueueEvent event) {
     // some example code to dispatch IMC to another mod
-    InterModComms.sendTo(Config.MOD_ID, "helloworld", () -> {
+    InterModComms.sendTo(Constants.MOD_ID, "helloworld", () -> {
       LOGGER.info("Hello world from the MDK");
       return "Hello world";
     });

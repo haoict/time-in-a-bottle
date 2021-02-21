@@ -1,5 +1,6 @@
 package com.haoict.tiab.common.capability;
 
+import com.haoict.tiab.config.NBTKeys;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 
@@ -15,13 +16,14 @@ public final class ItemEnergyForge extends ConfigEnergyStorage implements IPriva
 
   protected void writeEnergy() {
     CompoundNBT nbt = stack.getOrCreateTag();
-    nbt.putInt("energy", getEnergyStoredCache());
+    nbt.putInt(NBTKeys.ENERGY, getEnergyStoredCache());
   }
 
   protected void updateEnergy() {
     CompoundNBT nbt = stack.getOrCreateTag();
-    if (nbt.contains("energy"))
-      setEnergy(nbt.getInt("energy"));
+    if (nbt.contains(NBTKeys.ENERGY)) {
+      setEnergy(nbt.getInt(NBTKeys.ENERGY));
+    }
     updateMaxEnergy();
   }
 

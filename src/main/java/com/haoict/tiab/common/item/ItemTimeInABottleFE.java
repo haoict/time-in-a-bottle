@@ -1,11 +1,12 @@
 package com.haoict.tiab.common.item;
 
 import com.google.common.collect.ImmutableList;
-import com.haoict.tiab.common.Config;
 import com.haoict.tiab.common.capability.CapabilityProviderEnergy;
 import com.haoict.tiab.common.capability.IPrivateEnergy;
 import com.haoict.tiab.common.capability.MultiCapabilityProvider;
 import com.haoict.tiab.common.utils.UnitDisplay;
+import com.haoict.tiab.config.NBTKeys;
+import com.haoict.tiab.config.TiabConfig;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemGroup;
@@ -13,7 +14,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.ChatType;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
@@ -38,7 +38,7 @@ public class ItemTimeInABottleFE extends AbstractItemTiab {
   @Nullable
   public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundNBT tag) {
     ImmutableList.Builder<ICapabilityProvider> providerBuilder = ImmutableList.builder();
-    providerBuilder.add(new CapabilityProviderEnergy(stack, () -> Config.MAX_STORED_FE));
+    providerBuilder.add(new CapabilityProviderEnergy(stack, () -> TiabConfig.COMMON.maxStoredFE.get()));
     return new MultiCapabilityProvider(providerBuilder.build());
   }
 
@@ -49,7 +49,7 @@ public class ItemTimeInABottleFE extends AbstractItemTiab {
       return;
 
     ItemStack charged = new ItemStack(this);
-    charged.getOrCreateTag().putDouble("energy", Config.MAX_STORED_FE);
+    charged.getOrCreateTag().putDouble(NBTKeys.ENERGY, TiabConfig.COMMON.maxStoredFE.get());
     items.add(charged);
   }
 
@@ -83,7 +83,7 @@ public class ItemTimeInABottleFE extends AbstractItemTiab {
 
   @Override
   public boolean showDurabilityBar(ItemStack stack) {
-    if (stack.getTag() != null && stack.getTag().contains("creative"))
+    if (stack.getTag() != null && stack.getTag().contains(NBTKeys.CREATIVE_MARKER))
       return false;
 
     if (!stack.getCapability(CapabilityEnergy.ENERGY).isPresent()) {
@@ -129,7 +129,7 @@ public class ItemTimeInABottleFE extends AbstractItemTiab {
     // 30 seconds = 600 ticks
     // make the item costs more FE, to make it a little bit balance I guess
     // 30 seconds => 6000 FE
-    return super.getEnergyCost(timeRate) * 10;
+    return super.getEnergyCost(timeRate) * TiabConfig.COMMON.feCostMultiply.get();
   }
 
   @Override

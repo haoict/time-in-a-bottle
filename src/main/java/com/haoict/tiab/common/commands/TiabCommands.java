@@ -1,9 +1,10 @@
 package com.haoict.tiab.common.commands;
 
-import com.haoict.tiab.common.Config;
 import com.haoict.tiab.common.item.ItemTimeInABottle;
 import com.haoict.tiab.common.item.ItemTimeInABottleFE;
 import com.haoict.tiab.common.utils.SendMessage;
+import com.haoict.tiab.config.Constants;
+import com.haoict.tiab.config.TiabConfig;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.command.CommandSource;
@@ -30,15 +31,15 @@ public class TiabCommands {
                     try {
                       int timeToAdd = Integer.parseInt(messageValue.getString());
 
-                      if (timeToAdd > Config.MAX_STORED_TIME / 20) {
-                        timeToAdd = Config.MAX_STORED_TIME / 20;
+                      if (timeToAdd > TiabConfig.COMMON.maxStoredTime.get() / 20) {
+                        timeToAdd = TiabConfig.COMMON.maxStoredTime.get() / 20;
                       }
                       ItemStack currentItem = player.inventory.getCurrentItem();
                       Item item = currentItem.getItem();
 
                       if (item instanceof ItemTimeInABottle) {
                         ItemTimeInABottle itemTiab = (ItemTimeInABottle) item;
-                        itemTiab.setStoredEnergy(currentItem, itemTiab.getStoredEnergy(currentItem) + timeToAdd * Config.TICK_CONST);
+                        itemTiab.setStoredEnergy(currentItem, itemTiab.getStoredEnergy(currentItem) + timeToAdd * Constants.TICK_CONST);
                         SendMessage.sendMessage(player, "Added " + timeToAdd + " seconds");
                       } else {
                         SendMessage.sendMessage(player, "You need to hold Time in a bottle to use this command");
@@ -64,8 +65,8 @@ public class TiabCommands {
                         try {
                           int feToAdd = Integer.parseInt(messageValue.getString());
 
-                          if (feToAdd > Config.MAX_STORED_FE) {
-                            feToAdd = Config.MAX_STORED_FE;
+                          if (feToAdd > TiabConfig.COMMON.maxStoredFE.get()) {
+                            feToAdd = TiabConfig.COMMON.maxStoredFE.get();
                           }
                           ItemStack currentItem = player.inventory.getCurrentItem();
                           Item item = currentItem.getItem();
