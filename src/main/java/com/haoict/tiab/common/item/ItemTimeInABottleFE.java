@@ -1,11 +1,11 @@
-package com.haoict.tiab.item;
+package com.haoict.tiab.common.item;
 
 import com.google.common.collect.ImmutableList;
-import com.haoict.tiab.Config;
-import com.haoict.tiab.capability.CapabilityProviderEnergy;
-import com.haoict.tiab.capability.IPrivateEnergy;
-import com.haoict.tiab.capability.MultiCapabilityProvider;
-import com.haoict.tiab.utils.UnitDisplay;
+import com.haoict.tiab.common.Config;
+import com.haoict.tiab.common.capability.CapabilityProviderEnergy;
+import com.haoict.tiab.common.capability.IPrivateEnergy;
+import com.haoict.tiab.common.capability.MultiCapabilityProvider;
+import com.haoict.tiab.common.utils.UnitDisplay;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemGroup;
@@ -13,8 +13,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.ChatType;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -94,8 +96,10 @@ public class ItemTimeInABottleFE extends AbstractItemTiab {
   @Override
   @OnlyIn(Dist.CLIENT)
   public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<ITextComponent> tooltip, @Nonnull ITooltipFlag flagIn) {
-    String storedEnergyStr = UnitDisplay.format(getStoredEnergy(stack)) + "FE";
+    int storedEnergy = getStoredEnergy(stack);
+    String storedEnergyStr = storedEnergy + " (" + UnitDisplay.format(storedEnergy) + "FE)";
     tooltip.add(new StringTextComponent(I18n.format("item.tiab.timeinabottlefe.tooltip", storedEnergyStr)));
+    tooltip.add(new StringTextComponent(TextFormatting.GRAY + I18n.format("item.tiab.timeinabottlefe.tooltip1")));
   }
 
   public int getMaxEnergy(ItemStack stack) {
@@ -119,4 +123,17 @@ public class ItemTimeInABottleFE extends AbstractItemTiab {
     stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> ((IPrivateEnergy) e).extractPower(damage, false));
   }
 
+  @Override
+  public int getEnergyCost(int timeRate) {
+    // 20,000 RF = 1 Coal (as most common mods fuel levels)
+    // 30 seconds = 600 ticks
+    // make the item costs more FE, to make it a little bit balance I guess
+    // 30 seconds => 6000 FE
+    return super.getEnergyCost(timeRate) * 10;
+  }
+
+  @Override
+  public boolean hasEffect(ItemStack stack) {
+    return true;
+  }
 }

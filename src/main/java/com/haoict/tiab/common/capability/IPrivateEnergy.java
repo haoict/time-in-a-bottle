@@ -1,4 +1,4 @@
-package com.haoict.tiab.capability;
+package com.haoict.tiab.common.capability;
 
 import net.minecraftforge.energy.IEnergyStorage;
 

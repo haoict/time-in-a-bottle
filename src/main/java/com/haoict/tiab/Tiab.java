@@ -1,7 +1,11 @@
 package com.haoict.tiab;
 
 import com.haoict.tiab.client.ClientProxy;
-import com.haoict.tiab.entities.TiabEntityTypes;
+import com.haoict.tiab.common.CommandEventRegistryHandler;
+import com.haoict.tiab.common.CommonProxy;
+import com.haoict.tiab.common.Config;
+import com.haoict.tiab.common.ItemRegistryHandler;
+import com.haoict.tiab.common.entities.TiabEntityTypes;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;

@@ -1,8 +1,8 @@
-package com.haoict.tiab.item;
+package com.haoict.tiab.common.item;
 
-import com.haoict.tiab.Config;
-import com.haoict.tiab.entities.EntityTimeAccelerator;
-import com.haoict.tiab.utils.PlaySound;
+import com.haoict.tiab.common.Config;
+import com.haoict.tiab.common.entities.EntityTimeAccelerator;
+import com.haoict.tiab.common.utils.PlaySound;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -47,7 +47,7 @@ public abstract class AbstractItemTiab extends Item {
     }
 
     int nextRate = 1;
-    int energyRequired = THIRTY_SECONDS;
+    int energyRequired = getEnergyCost(nextRate);
     boolean isCreativeMode = player != null && player.abilities.isCreativeMode;
 
     Optional<EntityTimeAccelerator> o = context.getWorld().getEntitiesWithinAABB(EntityTimeAccelerator.class, new AxisAlignedBB(pos).shrink(0.2)).stream().findFirst();
@@ -63,9 +63,9 @@ public abstract class AbstractItemTiab extends Item {
 
       nextRate = currentRate * 2;
       int timeAdded = usedUpTime / 2;
-      energyRequired = nextRate / 2 * THIRTY_SECONDS;
+      energyRequired = getEnergyCost(nextRate);
 
-      if (canUse(stack, isCreativeMode, energyRequired)) {
+      if (!canUse(stack, isCreativeMode, energyRequired)) {
         return ActionResultType.SUCCESS;
       }
 
@@ -73,7 +73,7 @@ public abstract class AbstractItemTiab extends Item {
       entityTA.setRemainingTime(entityTA.getRemainingTime() + timeAdded);
     } else {
       // First use
-      if (canUse(stack, isCreativeMode, THIRTY_SECONDS)) {
+      if (!canUse(stack, isCreativeMode, energyRequired)) {
         return ActionResultType.SUCCESS;
       }
 
@@ -90,11 +90,13 @@ public abstract class AbstractItemTiab extends Item {
     return ActionResultType.SUCCESS;
   }
 
+  public int getEnergyCost(int timeRate) {
+    if (timeRate <= 1) return THIRTY_SECONDS;
+    return timeRate / 2 * THIRTY_SECONDS;
+  }
+
   public boolean canUse(ItemStack stack, boolean isCreativeMode, int energyRequired) {
-    if (getStoredEnergy(stack) < energyRequired && !isCreativeMode) {
-      return true;
-    }
-    return false;
+    return getStoredEnergy(stack) >= energyRequired || isCreativeMode;
   }
 
   protected abstract int getStoredEnergy(ItemStack stack);

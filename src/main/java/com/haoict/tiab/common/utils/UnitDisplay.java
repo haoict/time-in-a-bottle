@@ -1,4 +1,4 @@
-package com.haoict.tiab.utils;
+package com.haoict.tiab.common.utils;
 
 import java.util.Map;
 import java.util.NavigableMap;

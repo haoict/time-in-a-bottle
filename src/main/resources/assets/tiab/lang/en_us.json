@@ -2,5 +2,6 @@
   "item.tiab.timeinabottle": "Time in a bottle",
   "item.tiab.timeinabottle.tooltip": "Stored time %s:%s:%s",
   "item.tiab.timeinabottlefe": "Time in a bottle FE",
-  "item.tiab.timeinabottlefe.tooltip": "Energy: %s"
+  "item.tiab.timeinabottlefe.tooltip": "Energy: %s",
+  "item.tiab.timeinabottlefe.tooltip1": "Use FE/RF instead of time"
 }

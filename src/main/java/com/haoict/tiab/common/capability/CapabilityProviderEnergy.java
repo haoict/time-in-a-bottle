@@ -1,4 +1,4 @@
-package com.haoict.tiab.capability;
+package com.haoict.tiab.common.capability;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;

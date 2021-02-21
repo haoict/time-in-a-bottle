@@ -1,7 +1,7 @@
 package com.haoict.tiab.client;
 
 import com.haoict.tiab.client.renderer.EntityTimeAcceleratorRenderer;
-import com.haoict.tiab.entities.TiabEntityTypes;
+import com.haoict.tiab.common.entities.TiabEntityTypes;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 
 public class ClientProxy {
