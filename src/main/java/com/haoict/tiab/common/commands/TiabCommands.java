@@ -1,7 +1,7 @@
 package com.haoict.tiab.common.commands;
 
-import com.haoict.tiab.common.item.ItemTimeInABottle;
-import com.haoict.tiab.common.item.ItemTimeInABottleFE;
+import com.haoict.tiab.common.items.ItemTimeInABottle;
+import com.haoict.tiab.common.items.ItemTimeInABottleFE;
 import com.haoict.tiab.common.utils.SendMessage;
 import com.haoict.tiab.config.Constants;
 import com.haoict.tiab.config.TiabConfig;

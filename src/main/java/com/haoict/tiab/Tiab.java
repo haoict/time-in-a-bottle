@@ -1,14 +1,17 @@
 package com.haoict.tiab;
 
 import com.haoict.tiab.client.ClientProxy;
-import com.haoict.tiab.common.CommandEventRegistryHandler;
+import com.haoict.tiab.client.screens.ScreenTimeCharger;
+import com.haoict.tiab.common.registries.BlockRegistry;
+import com.haoict.tiab.common.registries.CommandEventRegistry;
 import com.haoict.tiab.common.CommonProxy;
-import com.haoict.tiab.common.ItemRegistryHandler;
+import com.haoict.tiab.common.registries.ItemRegistry;
 import com.haoict.tiab.common.entities.TiabEntityTypes;
 import com.haoict.tiab.config.Constants;
 import com.haoict.tiab.config.TiabConfig;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.entity.EntityType;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
@@ -48,11 +51,12 @@ public class Tiab {
     // Register ourselves for server and other game events we are interested in
     MinecraftForge.EVENT_BUS.register(this);
 
+    ItemRegistry.init();
+    BlockRegistry.init();
 
     DistExecutor.safeRunForDist(() -> ClientProxy::new, () -> CommonProxy::new);
 
-    ItemRegistryHandler.init();
-    MinecraftForge.EVENT_BUS.register(CommandEventRegistryHandler.class);
+    MinecraftForge.EVENT_BUS.register(CommandEventRegistry.class);
   }
 
   private void setup(final FMLCommonSetupEvent event) {
@@ -64,6 +68,7 @@ public class Tiab {
   private void doClientStuff(final FMLClientSetupEvent event) {
     // do something that can only be done on the client
     LOGGER.info("Got game settings {}", event.getMinecraftSupplier().get().gameSettings);
+    ScreenManager.registerFactory(BlockRegistry.TIME_CHARGER_CONTAINER.get(), ScreenTimeCharger::new);
   }
 
   private void enqueueIMC(final InterModEnqueueEvent event) {

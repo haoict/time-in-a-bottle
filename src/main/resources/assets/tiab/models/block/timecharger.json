@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/orientable_with_bottom",
+  "textures": {
+    "side": "tiab:blocks/timecharger_side",
+    "front": "tiab:blocks/timecharger_fronton",
+    "bottom": "tiab:blocks/timecharger_bottom",
+    "top": "tiab:blocks/timecharger_top"
+  }
+}

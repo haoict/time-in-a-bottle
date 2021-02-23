@@ -4,22 +4,20 @@ import com.haoict.tiab.config.NBTKeys;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 
-import java.util.function.IntSupplier;
-
-public final class ItemEnergyForge extends ConfigEnergyStorage implements IPrivateEnergy {
+public final class ItemEnergyForge extends AbstractEnergyStorage {
   private final ItemStack stack;
 
-  public ItemEnergyForge(ItemStack stack, IntSupplier capacity) {
-    super(capacity);
+  public ItemEnergyForge(ItemStack stack, int capacity, int maxInput, int maxOutput) {
+    super(capacity, maxInput, maxOutput);
     this.stack = stack;
   }
 
-  protected void writeEnergy() {
+  public void writeEnergyToNBT() {
     CompoundNBT nbt = stack.getOrCreateTag();
     nbt.putInt(NBTKeys.ENERGY, getEnergyStoredCache());
   }
 
-  protected void updateEnergy() {
+  public void updateEnergyFromNBT() {
     CompoundNBT nbt = stack.getOrCreateTag();
     if (nbt.contains(NBTKeys.ENERGY)) {
       setEnergy(nbt.getInt(NBTKeys.ENERGY));
@@ -30,21 +28,5 @@ public final class ItemEnergyForge extends ConfigEnergyStorage implements IPriva
   @Override
   public int extractEnergy(int maxExtract, boolean simulate) {
     return 0;
-  }
-
-  /**
-   * Do not use {@link #extractEnergy(int, boolean)} internally. This method
-   * stops the gadgets from being used like batteries.
-   */
-  public int extractPower(int maxExtract, boolean simulate) {
-    if (maxExtract < 0)
-      return 0;
-
-    int energyExtracted = evaluateEnergyExtracted(maxExtract, simulate);
-    if (!simulate) {
-      setEnergy(getEnergyStored() - energyExtracted);
-      writeEnergy();
-    }
-    return energyExtracted;
   }
 }

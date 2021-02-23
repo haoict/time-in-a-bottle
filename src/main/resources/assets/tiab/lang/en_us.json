@@ -1,7 +1,10 @@
 {
   "item.tiab.timeinabottle": "Time in a bottle",
   "item.tiab.timeinabottle.tooltip": "Stored time %s:%s:%s",
-  "item.tiab.timeinabottlefe": "Time in a bottle FE",
-  "item.tiab.timeinabottlefe.tooltip": "Energy: %s",
-  "item.tiab.timeinabottlefe.tooltip1": "Use FE/RF instead of time"
+  "item.tiab.timeinabottlefe": "Time in a bottle FE/RF",
+  "item.tiab.timeinabottlefe.tooltip": "Use FE/RF instead of time",
+  "item.tiab.energy.tooltip": "Energy: %s",
+  "block.tiab.timecharger": "Time Charger",
+  "block.tiab.timecharger.creative": "Creative Time Charger",
+  "screen.tiab.timecharger.energy": "Energy: %s/%s FE"
 }

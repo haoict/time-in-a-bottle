@@ -9,14 +9,13 @@ import net.minecraftforge.energy.CapabilityEnergy;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.function.IntSupplier;
 
 public class CapabilityProviderEnergy implements ICapabilityProvider {
   private final ItemEnergyForge energyItem;
   private final LazyOptional<ItemEnergyForge> energyCapability;
 
-  public CapabilityProviderEnergy(ItemStack stack, IntSupplier energyCapacity) {
-    this.energyItem = new ItemEnergyForge(stack, energyCapacity);
+  public CapabilityProviderEnergy(ItemStack stack, int capacity, int maxInput, int maxOutput) {
+    this.energyItem = new ItemEnergyForge(stack, capacity, maxInput, maxOutput);
     this.energyCapability = LazyOptional.of(() -> energyItem);
   }
 

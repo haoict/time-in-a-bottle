@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "iri",
+    "drd",
+    "ili"
+  ],
+  "key": {
+    "i": {
+      "tag": "forge:ingots/iron"
+    },
+    "r": {
+      "tag": "forge:dusts/redstone"
+    },
+    "l": {
+      "tag": "forge:storage_blocks/coal"
+    },
+    "d": {
+      "tag": "forge:gems/lapis"
+    }
+  },
+  "result": {
+    "item": "tiab:timecharger"
+  }
+}

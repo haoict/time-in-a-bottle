@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "tiab:block/timecharger"
+    },
+    "facing=south": {
+      "model": "tiab:block/timecharger",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "tiab:block/timecharger",
+      "y": 270
+    },
+    "facing=east": {
+      "model": "tiab:block/timecharger",
+      "y": 90
+    }
+  }
+}
