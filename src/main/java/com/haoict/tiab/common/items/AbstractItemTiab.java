@@ -1,5 +1,6 @@
 package com.haoict.tiab.common.items;
 
+import com.haoict.tiab.Tiab;
 import com.haoict.tiab.common.entities.EntityTimeAccelerator;
 import com.haoict.tiab.common.utils.PlaySound;
 import com.haoict.tiab.config.Constants;
@@ -25,7 +26,7 @@ public abstract class AbstractItemTiab extends Item {
   private static final String[] NOTES = {"C", "D", "E", "F", "G2", "A2", "B2", "C2", "D2", "E2", "F2"};
 
   public AbstractItemTiab() {
-    super(new Properties().group(ItemGroup.MISC).maxStackSize(1));
+    super(Tiab.TIAB_ITEM_PROPS.maxStackSize(1));
   }
 
   @Override

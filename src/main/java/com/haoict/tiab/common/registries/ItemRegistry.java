@@ -1,5 +1,6 @@
 package com.haoict.tiab.common.registries;
 
+import com.haoict.tiab.Tiab;
 import com.haoict.tiab.common.items.ItemBlockTimeCharger;
 import com.haoict.tiab.common.items.ItemTimeInABottle;
 import com.haoict.tiab.common.items.ItemTimeInABottleFE;
@@ -18,7 +19,7 @@ public class ItemRegistry {
   public static final RegistryObject<Item> BOTTLE = ITEMS.register("timeinabottle", () -> new ItemTimeInABottle());
   public static final RegistryObject<Item> BOTTLE_FE = ITEMS.register("timeinabottlefe", () -> new ItemTimeInABottleFE());
 
-  public static final RegistryObject<Item> TIME_CHARGER = ITEMS.register("timecharger", () -> new ItemBlockTimeCharger(BlockRegistry.TIME_CHARGER.get(), new Item.Properties().group(ItemGroup.BUILDING_BLOCKS)));
+  public static final RegistryObject<Item> TIME_CHARGER = ITEMS.register("timecharger", () -> new ItemBlockTimeCharger(BlockRegistry.TIME_CHARGER.get(), Tiab.TIAB_ITEM_PROPS));
 
   public static void init() {
     // attach DeferredRegister to the event bus

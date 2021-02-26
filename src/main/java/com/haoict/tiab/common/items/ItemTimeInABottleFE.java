@@ -41,6 +41,10 @@ public class ItemTimeInABottleFE extends AbstractItemTiab {
 
   @Override
   public void fillItemGroup(@Nonnull ItemGroup group, @Nonnull NonNullList<ItemStack> items) {
+    if (!TiabConfig.COMMON.enableTimeInABottleFE.get()) {
+      return;
+    }
+
     super.fillItemGroup(group, items);
     if (!isInGroup(group))
       return;
@@ -112,8 +116,8 @@ public class ItemTimeInABottleFE extends AbstractItemTiab {
   @Override
   public void setStoredEnergy(ItemStack stack, int energy) {
     stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(e -> {
-      ((ItemEnergyForge)e).setEnergy(e.getEnergyStored() + energy);
-      ((ItemEnergyForge)e).writeEnergyToNBT();
+      ((ItemEnergyForge) e).setEnergy(e.getEnergyStored() + energy);
+      ((ItemEnergyForge) e).writeEnergyToNBT();
     });
   }
 
@@ -128,7 +132,7 @@ public class ItemTimeInABottleFE extends AbstractItemTiab {
     // 30 seconds = 600 ticks
     // make the items costs more FE, to make it a little bit balance I guess
     // 30 seconds => 6000 FE
-    return super.getEnergyCost(timeRate) * TiabConfig.COMMON.feCostMultiply.get();
+    return super.getEnergyCost(timeRate) * TiabConfig.COMMON.equivalentFeForATick.get();
   }
 
   @Override

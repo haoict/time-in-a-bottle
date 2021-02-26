@@ -1,0 +1,38 @@
+{
+  "type": "forge:conditional",
+  "recipes": [
+    {
+      "conditions": [
+        {
+          "configName": "enableTimeCharger",
+          "type": "tiab:booleancondition"
+        }
+      ],
+      "recipe": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          "IRI",
+          "LRL",
+          "IDI"
+        ],
+        "key": {
+          "I": {
+            "tag": "forge:ingots/iron"
+          },
+          "R": {
+            "tag": "forge:dusts/redstone"
+          },
+          "D": {
+            "tag": "forge:storage_blocks/diamond"
+          },
+          "L": {
+            "tag": "forge:gems/lapis"
+          }
+        },
+        "result": {
+          "item": "tiab:timecharger"
+        }
+      }
+    }
+  ]
+}

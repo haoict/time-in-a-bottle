@@ -31,6 +31,9 @@ public class ItemBlockTimeCharger extends BlockItem {
 
   @Override
   public void fillItemGroup(@Nonnull ItemGroup group, @Nonnull NonNullList<ItemStack> items) {
+    if (!TiabConfig.COMMON.enableTimeCharger.get()) {
+      return;
+    }
     super.fillItemGroup(group, items);
     if (!isInGroup(group))
       return;

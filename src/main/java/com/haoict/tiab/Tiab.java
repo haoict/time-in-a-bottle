@@ -2,6 +2,7 @@ package com.haoict.tiab;
 
 import com.haoict.tiab.client.ClientProxy;
 import com.haoict.tiab.client.screens.ScreenTimeCharger;
+import com.haoict.tiab.common.datagen.RecipeConditionSerializer;
 import com.haoict.tiab.common.registries.BlockRegistry;
 import com.haoict.tiab.common.registries.CommandEventRegistry;
 import com.haoict.tiab.common.CommonProxy;
@@ -13,7 +14,11 @@ import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.entity.EntityType;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
@@ -36,6 +41,19 @@ public class Tiab {
   // Directly reference a log4j logger.
   private static final Logger LOGGER = LogManager.getLogger();
 
+  /**
+   * Register our creative tab. Notice that we're also modifying the NBT data of the
+   * building gadget to remove the damage / energy indicator from the creative
+   * tabs icon.
+   */
+  public static final ItemGroup TIAB_ITEM_GROUP = new ItemGroup(Constants.MOD_ID) {
+    @Override
+    public ItemStack createIcon() {
+      return new ItemStack(ItemRegistry.BOTTLE.get());
+    }
+  };
+  public static final Item.Properties TIAB_ITEM_PROPS = new Item.Properties().group(TIAB_ITEM_GROUP);
+
   public Tiab() {
     TiabConfig.init();
 
@@ -55,6 +73,8 @@ public class Tiab {
     BlockRegistry.init();
 
     DistExecutor.safeRunForDist(() -> ClientProxy::new, () -> CommonProxy::new);
+
+    CraftingHelper.register(new RecipeConditionSerializer());
 
     MinecraftForge.EVENT_BUS.register(CommandEventRegistry.class);
   }

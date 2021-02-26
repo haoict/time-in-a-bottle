@@ -116,7 +116,7 @@ public class TileTimeCharger extends TileEntity implements INamedContainerProvid
         if (!isChargingItemTime(stack)) {
           return;
         }
-        itemTiab.setStoredEnergy(stack, itemTiab.getStoredEnergy(stack) + maxIO / TiabConfig.COMMON.feCostMultiply.get());
+        itemTiab.setStoredEnergy(stack, itemTiab.getStoredEnergy(stack) + maxIO / TiabConfig.COMMON.equivalentFeForATick.get());
         if (!this.isCreative) {
           ((TileEnergyStorage) energyStorage).consumeEnergy(maxIO, false);
         }

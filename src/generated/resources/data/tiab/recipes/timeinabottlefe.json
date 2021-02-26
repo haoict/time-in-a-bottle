@@ -1,0 +1,41 @@
+{
+  "type": "forge:conditional",
+  "recipes": [
+    {
+      "conditions": [
+        {
+          "configName": "enableTimeInABottleFE",
+          "type": "tiab:booleancondition"
+        }
+      ],
+      "recipe": {
+        "type": "minecraft:crafting_shaped",
+        "pattern": [
+          "GGG",
+          "DCD",
+          "RBR"
+        ],
+        "key": {
+          "G": {
+            "tag": "forge:ingots/gold"
+          },
+          "D": {
+            "tag": "forge:gems/diamond"
+          },
+          "R": {
+            "tag": "forge:dusts/redstone"
+          },
+          "C": {
+            "item": "minecraft:clock"
+          },
+          "B": {
+            "item": "minecraft:glass_bottle"
+          }
+        },
+        "result": {
+          "item": "tiab:timeinabottlefe"
+        }
+      }
+    }
+  ]
+}
