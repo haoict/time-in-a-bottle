@@ -35,7 +35,7 @@ public class ContainerTimeCharger extends Container {
   public ItemStackHandler itemStackHandler;
 
   public ContainerTimeCharger(int windowId, PlayerInventory playerInventory, PacketBuffer extraData) {
-    this((TileTimeCharger) playerInventory.player.world.getTileEntity(extraData.readBlockPos()), new IntArray(4), windowId, playerInventory, new ItemStackHandler(2));
+    this((TileTimeCharger) playerInventory.player.world.getTileEntity(extraData.readBlockPos()), new IntArray(2), windowId, playerInventory, new ItemStackHandler(SLOTS));
   }
 
   public ContainerTimeCharger(TileTimeCharger tileEntity, IIntArray data, int windowId, PlayerInventory playerInventory, ItemStackHandler itemStackHandler) {
@@ -112,11 +112,11 @@ public class ContainerTimeCharger extends Container {
   }
 
   public int getMaxPower() {
-    return this.data.get(1) * 32;
+    return this.data.get(1);
   }
 
   public int getEnergy() {
-    return this.data.get(0) * 32;
+    return this.data.get(0);
   }
 
   static class RestrictedSlot extends SlotItemHandler {

@@ -1,11 +1,14 @@
 package com.haoict.tiab.common.tiles;
 
+import com.haoict.tiab.common.blocks.BlockTimeCharger;
 import com.haoict.tiab.common.capability.TileEnergyStorage;
 import com.haoict.tiab.common.capability.TileTimeChargerInventoryHandler;
 import com.haoict.tiab.common.container.ContainerTimeCharger;
 import com.haoict.tiab.common.items.ItemTimeInABottle;
 import com.haoict.tiab.common.items.ItemTimeInABottleFE;
 import com.haoict.tiab.common.registries.BlockRegistry;
+import com.haoict.tiab.common.utils.SetBlockStateFlag;
+import com.haoict.tiab.config.NBTKeys;
 import com.haoict.tiab.config.TiabConfig;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -32,6 +35,7 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class TileTimeCharger extends TileEntity implements INamedContainerProvider, ITickableTileEntity {
   private final LazyOptional<TileEnergyStorage> energy;
@@ -56,9 +60,9 @@ public class TileTimeCharger extends TileEntity implements INamedContainerProvid
     public int get(int index) {
       switch (index) {
         case 0:
-          return TileTimeCharger.this.energyStorage.getEnergyStored() / 32;
+          return TileTimeCharger.this.energyStorage.getEnergyStored();
         case 1:
-          return TileTimeCharger.this.energyStorage.getMaxEnergyStored() / 32;
+          return TileTimeCharger.this.energyStorage.getMaxEnergyStored();
         default:
           throw new IllegalArgumentException("Invalid index: " + index);
       }
@@ -78,7 +82,7 @@ public class TileTimeCharger extends TileEntity implements INamedContainerProvid
 
   public TileTimeCharger() {
     super(BlockRegistry.TIME_CHARGER_TILE.get());
-    this.energyStorage = new TileEnergyStorage(0, TiabConfig.COMMON.timeChargerMaxFE.get());
+    this.energyStorage = new TileEnergyStorage(this, 0, TiabConfig.COMMON.timeChargerMaxFE.get());
     this.energy = LazyOptional.of(() -> this.energyStorage);
     this.isCreative = false;
   }
@@ -97,13 +101,17 @@ public class TileTimeCharger extends TileEntity implements INamedContainerProvid
 
   @Override
   public void tick() {
-    if (getWorld() == null)
+    if (world == null || world.isRemote)
       return;
 
     inventory.ifPresent(handler -> {
       ItemStack stack = handler.getStackInSlot(0);
-      if (!stack.isEmpty())
+
+      if (!stack.isEmpty()) {
         chargeItem(stack);
+      } else {
+        updateActiveBlockState(false);
+      }
     });
   }
 
@@ -111,61 +119,77 @@ public class TileTimeCharger extends TileEntity implements INamedContainerProvid
     this.getCapability(CapabilityEnergy.ENERGY).ifPresent(energyStorage -> {
       Item item = stack.getItem();
       int maxIO = Math.min(energyStorage.getEnergyStored(), TiabConfig.COMMON.timeChargerMaxIO.get());
+      AtomicInteger energyToConsume = new AtomicInteger(maxIO);
+
       if (item instanceof ItemTimeInABottle) {
         ItemTimeInABottle itemTiab = (ItemTimeInABottle) item;
-        if (!isChargingItemTime(stack)) {
+        if (!isChargingItemTime(energyStorage, stack)) {
+          updateActiveBlockState(false);
           return;
         }
+        updateActiveBlockState(true);
         itemTiab.setStoredEnergy(stack, itemTiab.getStoredEnergy(stack) + maxIO / TiabConfig.COMMON.equivalentFeForATick.get());
-        if (!this.isCreative) {
-          ((TileEnergyStorage) energyStorage).consumeEnergy(maxIO, false);
-        }
       } else if (item instanceof ItemTimeInABottleFE) {
         stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(itemEnergy -> {
-          if (!isChargingItemFE(itemEnergy)) {
+          if (!isChargingItemFE(energyStorage, itemEnergy)) {
+            updateActiveBlockState(false);
             return;
           }
-          int energyRemoved = itemEnergy.receiveEnergy(maxIO, false);
-          if (!this.isCreative) {
-            ((TileEnergyStorage) energyStorage).consumeEnergy(energyRemoved, false);
-          }
+          updateActiveBlockState(true);
+          energyToConsume.set(itemEnergy.receiveEnergy(maxIO, false));
         });
+      }
+
+      if (!this.isCreative) {
+        ((TileEnergyStorage) energyStorage).consumeEnergy(energyToConsume.get(), false);
       }
     });
   }
 
-  public boolean isChargingItemTime(ItemStack stack) {
+  public boolean isChargingItemTime(IEnergyStorage sourceEnergy, ItemStack stack) {
     int storedTime = ((ItemTimeInABottle) stack.getItem()).getStoredEnergy(stack);
-    return storedTime >= 0 && storedTime < TiabConfig.COMMON.maxStoredTime.get();
+    return sourceEnergy.getEnergyStored() > 0 && storedTime > 0 && storedTime < TiabConfig.COMMON.maxStoredTime.get();
   }
 
-  public boolean isChargingItemFE(IEnergyStorage energy) {
-    return energy.getEnergyStored() >= 0 && energy.receiveEnergy(energy.getEnergyStored(), true) >= 0;
+  public boolean isChargingItemFE(IEnergyStorage sourceEnergy, IEnergyStorage targetEnergy) {
+    return sourceEnergy.getEnergyStored() > 0 && targetEnergy.getEnergyStored() > 0 && targetEnergy.getEnergyStored() < targetEnergy.getMaxEnergyStored();
+  }
+
+  private void updateActiveBlockState(boolean isActive) {
+    assert world != null;
+    BlockState currentBlockState = world.getBlockState(this.pos);
+    BlockState newBlockState = currentBlockState.with(BlockTimeCharger.ACTIVE_STATE, isActive);
+
+    if (!newBlockState.equals(currentBlockState)) {
+      final int FLAGS = SetBlockStateFlag.get(SetBlockStateFlag.BLOCK_UPDATE, SetBlockStateFlag.SEND_TO_CLIENTS);
+      world.setBlockState(this.pos, newBlockState, FLAGS);
+    }
   }
 
   /* The name is misleading; createMenu has nothing to do with creating a Screen, it is used to create the Container on the server only */
   @Nullable
   @Override
-  public Container createMenu(int windowID, PlayerInventory playerInventory, PlayerEntity playerEntity) {
+  public Container createMenu(int windowID, @Nonnull PlayerInventory playerInventory, @Nonnull PlayerEntity playerEntity) {
     assert world != null;
     return new ContainerTimeCharger(this, timeChargerData, windowID, playerInventory, this.inventory.orElse(new ItemStackHandler(1)));
   }
 
   /* This is where you load the data that you saved in writeToNBT */
   @Override
-  public void read(BlockState stateIn, CompoundNBT compound) {
+  public void read(@Nonnull BlockState stateIn, @Nonnull CompoundNBT compound) {
     super.read(stateIn, compound);
-    inventory.ifPresent(h -> h.deserializeNBT(compound.getCompound("inventory")));
-    energy.ifPresent(h -> h.deserializeNBT(compound.getCompound("energy")));
+    inventory.ifPresent(h -> h.deserializeNBT(compound.getCompound(NBTKeys.INVENTORY)));
+    energy.ifPresent(h -> h.deserializeNBT(compound.getCompound(NBTKeys.ENERGY)));
   }
 
   /* This is where you save any data that you don't want to lose when the tile entity unloads
    * In this case, it saves the state of the furnace (burn time etc) and the itemstacks stored in the fuel, input, and output slots
    */
   @Override
-  public CompoundNBT write(CompoundNBT compound) {
-    inventory.ifPresent(h -> compound.put("inventory", h.serializeNBT()));
-    energy.ifPresent(h -> compound.put("energy", h.serializeNBT()));
+  @Nonnull
+  public CompoundNBT write(@Nonnull CompoundNBT compound) {
+    inventory.ifPresent(h -> compound.put(NBTKeys.INVENTORY, h.serializeNBT()));
+    energy.ifPresent(h -> compound.put(NBTKeys.ENERGY, h.serializeNBT()));
     return super.write(compound);
   }
 
@@ -180,6 +204,7 @@ public class TileTimeCharger extends TileEntity implements INamedContainerProvid
   }
 
   @Override
+  @Nonnull
   public CompoundNBT getUpdateTag() {
     return write(new CompoundNBT());
   }
@@ -194,11 +219,19 @@ public class TileTimeCharger extends TileEntity implements INamedContainerProvid
     read(this.getBlockState(), pkt.getNbtCompound());
   }
 
+  @Override
+  public void remove() {
+    energy.invalidate();
+    inventory.invalidate();
+    super.remove();
+  }
+
   public TileEnergyStorage getEnergyStorage() {
     return energyStorage;
   }
 
   @Override
+  @Nonnull
   public ITextComponent getDisplayName() {
     return new StringTextComponent("Time Charger Tile Entity");
   }

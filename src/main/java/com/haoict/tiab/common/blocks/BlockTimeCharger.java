@@ -15,6 +15,7 @@ import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.LootContext;
 import net.minecraft.loot.LootParameters;
+import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
@@ -38,16 +39,18 @@ import java.util.List;
 
 public class BlockTimeCharger extends Block {
   public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+  public static final BooleanProperty ACTIVE_STATE = BooleanProperty.create("active");
 
   public BlockTimeCharger() {
     super(Properties.create(Material.ROCK).hardnessAndResistance(5.0f, 6.0f).harvestLevel(1).harvestTool(ToolType.PICKAXE));
-    setDefaultState(getStateContainer().getBaseState().with(FACING, Direction.NORTH));
+    setDefaultState(getStateContainer().getBaseState().with(FACING, Direction.NORTH).with(ACTIVE_STATE, false));
   }
 
   @Override
   protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
     super.fillStateContainer(builder);
     builder.add(FACING);
+    builder.add(ACTIVE_STATE);
   }
 
   @Nullable

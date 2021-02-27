@@ -1,18 +1,33 @@
 {
   "variants": {
-    "facing=north": {
+    "facing=north,active=false": {
       "model": "tiab:block/timecharger"
     },
-    "facing=south": {
+    "facing=south,active=false": {
       "model": "tiab:block/timecharger",
       "y": 180
     },
-    "facing=west": {
+    "facing=west,active=false": {
       "model": "tiab:block/timecharger",
       "y": 270
     },
-    "facing=east": {
+    "facing=east,active=false": {
       "model": "tiab:block/timecharger",
+      "y": 90
+    },
+    "facing=north,active=true": {
+      "model": "tiab:block/timecharger_active"
+    },
+    "facing=south,active=true": {
+      "model": "tiab:block/timecharger_active",
+      "y": 180
+    },
+    "facing=west,active=true": {
+      "model": "tiab:block/timecharger_active",
+      "y": 270
+    },
+    "facing=east,active=true": {
+      "model": "tiab:block/timecharger_active",
       "y": 90
     }
   }

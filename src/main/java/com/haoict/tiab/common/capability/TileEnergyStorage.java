@@ -3,11 +3,15 @@ package com.haoict.tiab.common.capability;
 import com.haoict.tiab.config.NBTKeys;
 import com.haoict.tiab.config.TiabConfig;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.INBTSerializable;
 
 public class TileEnergyStorage extends AbstractEnergyStorage implements INBTSerializable<CompoundNBT> {
-  public TileEnergyStorage(int energy, int capacity) {
+  private final TileEntity tile;
+
+  public TileEnergyStorage(TileEntity tile, int energy, int capacity) {
     super(capacity, TiabConfig.COMMON.timeChargerMaxIO.get());
+    this.tile = tile;
     this.setEnergy(energy);
   }
 
