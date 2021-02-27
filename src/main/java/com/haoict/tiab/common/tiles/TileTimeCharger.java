@@ -42,6 +42,8 @@ public class TileTimeCharger extends TileEntity implements INamedContainerProvid
   private final LazyOptional<ItemStackHandler> inventory = LazyOptional.of(() -> new TileTimeChargerInventoryHandler(this));
   private final TileEnergyStorage energyStorage;
 
+  public static final int TIME_CHARGER_DATA_SIZE = 2;
+
   /*
    * This is used to store some state data for the tile entity (eg energy, maxEnergy, etc)
    * 1) The Server TileEntity uses it to store the data permanently, including NBT serialisation and deserialisation
@@ -54,15 +56,20 @@ public class TileTimeCharger extends TileEntity implements INamedContainerProvid
    *
    *  The IIntArray interface collates all the separate member variables into a single array for the purposes of transmitting
    *     from server to client (handled by Vanilla)
+   *
+   * Container#trackIntArray only supports 16-bit short values. So we have to divide it to 32
+   * If you need more data:
+   * Override detectAndSendChanges in your Container. Check if the data has changed since the last time it was called.
+   * If so, send a custom packet to all listeners (Container#listeners, you need reflection to access this field; check if the listener is a player to send them a packet).
    */
   private final IIntArray timeChargerData = new IIntArray() {
     @Override
     public int get(int index) {
       switch (index) {
         case 0:
-          return TileTimeCharger.this.energyStorage.getEnergyStored();
+          return TileTimeCharger.this.energyStorage.getEnergyStored() / 32;
         case 1:
-          return TileTimeCharger.this.energyStorage.getMaxEnergyStored();
+          return TileTimeCharger.this.energyStorage.getMaxEnergyStored() / 32;
         default:
           throw new IllegalArgumentException("Invalid index: " + index);
       }
@@ -75,7 +82,7 @@ public class TileTimeCharger extends TileEntity implements INamedContainerProvid
 
     @Override
     public int size() {
-      return 2;
+      return TIME_CHARGER_DATA_SIZE;
     }
   };
   private boolean isCreative;
@@ -133,6 +140,7 @@ public class TileTimeCharger extends TileEntity implements INamedContainerProvid
         stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(itemEnergy -> {
           if (!isChargingItemFE(energyStorage, itemEnergy)) {
             updateActiveBlockState(false);
+            energyToConsume.set(0);
             return;
           }
           updateActiveBlockState(true);
@@ -148,11 +156,11 @@ public class TileTimeCharger extends TileEntity implements INamedContainerProvid
 
   public boolean isChargingItemTime(IEnergyStorage sourceEnergy, ItemStack stack) {
     int storedTime = ((ItemTimeInABottle) stack.getItem()).getStoredEnergy(stack);
-    return sourceEnergy.getEnergyStored() > 0 && storedTime > 0 && storedTime < TiabConfig.COMMON.maxStoredTime.get();
+    return sourceEnergy.getEnergyStored() > 0 && storedTime < TiabConfig.COMMON.maxStoredTime.get();
   }
 
   public boolean isChargingItemFE(IEnergyStorage sourceEnergy, IEnergyStorage targetEnergy) {
-    return sourceEnergy.getEnergyStored() > 0 && targetEnergy.getEnergyStored() > 0 && targetEnergy.getEnergyStored() < targetEnergy.getMaxEnergyStored();
+    return sourceEnergy.getEnergyStored() > 0 && targetEnergy.getEnergyStored() < targetEnergy.getMaxEnergyStored();
   }
 
   private void updateActiveBlockState(boolean isActive) {
@@ -180,6 +188,7 @@ public class TileTimeCharger extends TileEntity implements INamedContainerProvid
     super.read(stateIn, compound);
     inventory.ifPresent(h -> h.deserializeNBT(compound.getCompound(NBTKeys.INVENTORY)));
     energy.ifPresent(h -> h.deserializeNBT(compound.getCompound(NBTKeys.ENERGY)));
+    this.isCreative = compound.getBoolean(NBTKeys.CREATIVE_MARKER);
   }
 
   /* This is where you save any data that you don't want to lose when the tile entity unloads
@@ -190,6 +199,7 @@ public class TileTimeCharger extends TileEntity implements INamedContainerProvid
   public CompoundNBT write(@Nonnull CompoundNBT compound) {
     inventory.ifPresent(h -> compound.put(NBTKeys.INVENTORY, h.serializeNBT()));
     energy.ifPresent(h -> compound.put(NBTKeys.ENERGY, h.serializeNBT()));
+    compound.putBoolean(NBTKeys.CREATIVE_MARKER, this.isCreative);
     return super.write(compound);
   }
 

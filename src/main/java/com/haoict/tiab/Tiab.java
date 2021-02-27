@@ -52,7 +52,6 @@ public class Tiab {
       return new ItemStack(ItemRegistry.BOTTLE.get());
     }
   };
-  public static final Item.Properties TIAB_ITEM_PROPS = new Item.Properties().group(TIAB_ITEM_GROUP);
 
   public Tiab() {
     TiabConfig.init();

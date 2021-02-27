@@ -26,7 +26,7 @@ public abstract class AbstractItemTiab extends Item {
   private static final String[] NOTES = {"C", "D", "E", "F", "G2", "A2", "B2", "C2", "D2", "E2", "F2"};
 
   public AbstractItemTiab() {
-    super(Tiab.TIAB_ITEM_PROPS.maxStackSize(1));
+    super(new Item.Properties().group(Tiab.TIAB_ITEM_GROUP).maxStackSize(1));
   }
 
   @Override

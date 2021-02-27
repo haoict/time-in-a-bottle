@@ -36,8 +36,9 @@ public class DataGenRecipes extends RecipeProvider {
             .key('R', Tags.Items.DUSTS_REDSTONE)
             .key('D', Tags.Items.STORAGE_BLOCKS_DIAMOND)
             .key('L', Tags.Items.GEMS_LAPIS)
+            .key('C', Items.CLOCK)
             .patternLine("IRI")
-            .patternLine("LRL")
+            .patternLine("LCL")
             .patternLine("IDI")
             .addCriterion("has_diamonds", hasItem(Tags.Items.GEMS_DIAMOND))
             ::build

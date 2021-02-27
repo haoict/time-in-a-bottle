@@ -12,7 +12,7 @@
         "type": "minecraft:crafting_shaped",
         "pattern": [
           "IRI",
-          "LRL",
+          "LCL",
           "IDI"
         ],
         "key": {
@@ -27,6 +27,9 @@
           },
           "L": {
             "tag": "forge:gems/lapis"
+          },
+          "C": {
+            "item": "minecraft:clock"
           }
         },
         "result": {

@@ -1,7 +1,7 @@
 package com.haoict.tiab.common.container;
 
-import com.haoict.tiab.common.registries.BlockRegistry;
 import com.haoict.tiab.common.items.AbstractItemTiab;
+import com.haoict.tiab.common.registries.BlockRegistry;
 import com.haoict.tiab.common.tiles.TileTimeCharger;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -34,10 +34,12 @@ public class ContainerTimeCharger extends Container {
   private final TileTimeCharger tile;
   public ItemStackHandler itemStackHandler;
 
+  // constructor for client side, used for TIME_CHARGER_CONTAINER registry
   public ContainerTimeCharger(int windowId, PlayerInventory playerInventory, PacketBuffer extraData) {
-    this((TileTimeCharger) playerInventory.player.world.getTileEntity(extraData.readBlockPos()), new IntArray(2), windowId, playerInventory, new ItemStackHandler(SLOTS));
+    this((TileTimeCharger) playerInventory.player.world.getTileEntity(extraData.readBlockPos()), new IntArray(TileTimeCharger.TIME_CHARGER_DATA_SIZE), windowId, playerInventory, new ItemStackHandler(SLOTS));
   }
 
+  // constructor for server side
   public ContainerTimeCharger(TileTimeCharger tileEntity, IIntArray data, int windowId, PlayerInventory playerInventory, ItemStackHandler itemStackHandler) {
     super(BlockRegistry.TIME_CHARGER_CONTAINER.get(), windowId);
 
@@ -111,12 +113,12 @@ public class ContainerTimeCharger extends Container {
     return this.tile != null && !this.tile.isRemoved() && playerIn.getDistanceSq(new Vector3d(pos.getX(), pos.getY(), pos.getZ()).add(0.5D, 0.5D, 0.5D)) <= 64D;
   }
 
-  public int getMaxPower() {
-    return this.data.get(1);
+  public int getEnergy() {
+    return this.data.get(0) * 32; // why 32? already explained in TileTimeCharger IIntArray
   }
 
-  public int getEnergy() {
-    return this.data.get(0);
+  public int getMaxPower() {
+    return this.data.get(1) * 32;
   }
 
   static class RestrictedSlot extends SlotItemHandler {
