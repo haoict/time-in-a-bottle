@@ -59,7 +59,7 @@ public abstract class AbstractItemTiab extends Item {
       int currentRate = entityTA.getTimeRate();
       int usedUpTime = THIRTY_SECONDS - entityTA.getRemainingTime();
 
-      if (currentRate >= Math.pow(2, TiabConfig.COMMON.maxTimeRatePower.get())) {
+      if (currentRate >= Math.pow(2, TiabConfig.COMMON.maxTimeRatePower.get() - 1)) {
         return ActionResultType.SUCCESS;
       }
 
