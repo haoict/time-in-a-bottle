@@ -1,34 +1,28 @@
 package com.haoict.tiab;
 
-import com.haoict.tiab.client.ClientProxy;
-import com.haoict.tiab.client.screens.ScreenTimeCharger;
-import com.haoict.tiab.common.datagen.RecipeConditionSerializer;
-import com.haoict.tiab.common.registries.BlockRegistry;
-import com.haoict.tiab.common.registries.CommandEventRegistry;
-import com.haoict.tiab.common.CommonProxy;
-import com.haoict.tiab.common.registries.ItemRegistry;
-import com.haoict.tiab.common.entities.TiabEntityTypes;
+import com.haoict.tiab.client.renderer.TimeAcceleratorEntityRenderer;
+import com.haoict.tiab.commands.TiabCommands;
 import com.haoict.tiab.config.Constants;
 import com.haoict.tiab.config.TiabConfig;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.client.gui.ScreenManager;
-import net.minecraft.entity.EntityType;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
+import com.haoict.tiab.registries.EntityTypeRegistry;
+import com.haoict.tiab.registries.ItemRegistry;
+import net.minecraft.client.renderer.entity.EntityRenderers;
+import net.minecraft.commands.Commands;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.InterModComms;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
-import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -38,94 +32,55 @@ import java.util.stream.Collectors;
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(Constants.MOD_ID)
 public class Tiab {
-  // Directly reference a log4j logger.
-  private static final Logger LOGGER = LogManager.getLogger();
+    // Directly reference a log4j logger.
+    private static final Logger LOGGER = LogManager.getLogger();
 
-  /**
-   * Register our creative tab. Notice that we're also modifying the NBT data of the
-   * building gadget to remove the damage / energy indicator from the creative
-   * tabs icon.
-   */
-  public static final ItemGroup TIAB_ITEM_GROUP = new ItemGroup(Constants.MOD_ID) {
-    @Override
-    public ItemStack createIcon() {
-      return new ItemStack(ItemRegistry.BOTTLE.get());
+    public Tiab() {
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, TiabConfig.COMMON_CONFIG);
+
+        var bus = FMLJavaModLoadingContext.get().getModEventBus();
+
+        bus.addListener(this::setup);
+        bus.addListener(this::enqueueIMC);
+        bus.addListener(this::processIMC);
+        bus.addListener(this::clientSetup);
+
+        // Register ourselves for server and other game events we are interested in
+        MinecraftForge.EVENT_BUS.register(this);
+
+        ItemRegistry.ITEMS.register(bus);
+        EntityTypeRegistry.TILE_ENTITIES.register(bus);
     }
-  };
 
-  public Tiab() {
-    TiabConfig.init();
+    private void clientSetup(final FMLClientSetupEvent event) {
+        EntityRenderers.register(EntityTypeRegistry.timeAcceleratorEntityType.get(), TimeAcceleratorEntityRenderer::new);
+    }
 
-    // Register the setup method for modloading
-    FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
-    // Register the enqueueIMC method for modloading
-    FMLJavaModLoadingContext.get().getModEventBus().addListener(this::enqueueIMC);
-    // Register the processIMC method for modloading
-    FMLJavaModLoadingContext.get().getModEventBus().addListener(this::processIMC);
-    // Register the doClientStuff method for modloading
-    FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
+    private void setup(final FMLCommonSetupEvent event) {
+    }
 
-    // Register ourselves for server and other game events we are interested in
-    MinecraftForge.EVENT_BUS.register(this);
+    private void enqueueIMC(final InterModEnqueueEvent event) {
+    }
 
-    ItemRegistry.init();
-    BlockRegistry.init();
+    private void processIMC(final InterModProcessEvent event) {
+    }
 
-    DistExecutor.safeRunForDist(() -> ClientProxy::new, () -> CommonProxy::new);
-
-    CraftingHelper.register(new RecipeConditionSerializer());
-
-    MinecraftForge.EVENT_BUS.register(CommandEventRegistry.class);
-  }
-
-  private void setup(final FMLCommonSetupEvent event) {
-    // some preinit code
-    LOGGER.info("HELLO FROM PREINIT");
-    LOGGER.info("DIRT BLOCK >> {}", Blocks.DIRT.getRegistryName());
-  }
-
-  private void doClientStuff(final FMLClientSetupEvent event) {
-    // do something that can only be done on the client
-    LOGGER.info("Got game settings {}", event.getMinecraftSupplier().get().gameSettings);
-    ScreenManager.registerFactory(BlockRegistry.TIME_CHARGER_CONTAINER.get(), ScreenTimeCharger::new);
-  }
-
-  private void enqueueIMC(final InterModEnqueueEvent event) {
-    // some example code to dispatch IMC to another mod
-    InterModComms.sendTo(Constants.MOD_ID, "helloworld", () -> {
-      LOGGER.info("Hello world from the MDK");
-      return "Hello world";
-    });
-  }
-
-  private void processIMC(final InterModProcessEvent event) {
-    // some example code to receive and process InterModComms from other mods
-    LOGGER.info("Got IMC {}", event.getIMCStream().
-        map(m -> m.getMessageSupplier().get()).
-        collect(Collectors.toList()));
-  }
-
-  // You can use SubscribeEvent and let the Event Bus discover methods to call
-  @SubscribeEvent
-  public void onServerStarting(FMLServerStartingEvent event) {
-    // do something when the server starts
-    LOGGER.info("HELLO from server starting");
-  }
-
-  // You can use EventBusSubscriber to automatically subscribe events on the contained class (this is subscribing to the MOD
-  // Event bus for receiving Registry Events)
-  @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
-  public static class RegistryEvents {
+    // You can use SubscribeEvent and let the Event Bus discover methods to call
     @SubscribeEvent
-    public static void onBlocksRegistry(final RegistryEvent.Register<Block> blockRegistryEvent) {
-      // register a new block here
-      LOGGER.info("HELLO from Register Block");
+    public void onServerStarting(ServerStartingEvent event) {
+        event.getServer().getCommands().getDispatcher().register(Commands.literal(Constants.MOD_ID).then(TiabCommands.addTimeCommand).then(TiabCommands.removeTimeCommand));
     }
 
-    @SubscribeEvent
-    public static void onEntityTypeRegistration(RegistryEvent.Register<EntityType<?>> entityTypeRegisterEvent) {
-      TiabEntityTypes.timeAcceleratorEntityType.setRegistryName("tiab:time_accelerator_entity_type");
-      entityTypeRegisterEvent.getRegistry().register(TiabEntityTypes.timeAcceleratorEntityType);
+    // You can use EventBusSubscriber to automatically subscribe events on the contained class (this is subscribing to the MOD
+    // Event bus for receiving Registry Events)
+    @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
+    public static class RegistryEvents {
+        @SubscribeEvent
+        public static void onBlocksRegistry(final RegistryEvent.Register<Block> blockRegistryEvent) {
+        }
+
+        @SubscribeEvent
+        public static void onEntityTypeRegistration(RegistryEvent.Register<EntityType<?>> entityTypeRegisterEvent) {
+        }
     }
-  }
 }

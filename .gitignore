@@ -17,6 +17,8 @@ out
 build
 .gradle
 
+logs
+
 # other
 eclipse
 run

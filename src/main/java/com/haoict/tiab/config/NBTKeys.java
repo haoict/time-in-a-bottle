@@ -1,9 +1,11 @@
 package com.haoict.tiab.config;
 
 public class NBTKeys {
-  public static final String CREATIVE_MARKER = "creative";
-  public static final String ENERGY = "energy";
-  public static final String INVENTORY = "inventory";
-  public static final String TIME_DATA_TAG = "timeData";
-  public static final String STORED_TIME_KEY = "storedTime";
+    // for time in a bottle item
+    public static final String STORED_TIME = "storedTime";
+
+    // for time accelerator entity
+    public static final String ENTITY_TIME_RATE = "timeRate";
+    public static final String ENTITY_REMAINING_TIME = "remainingTime";
+    public static final String ENTITY_POS = "position";
 }

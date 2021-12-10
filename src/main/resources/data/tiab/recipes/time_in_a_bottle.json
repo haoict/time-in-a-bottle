@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "GGG",
+    "DCD",
+    "LBL"
+  ],
+  "key": {
+    "G": {
+      "tag": "forge:ingots/gold"
+    },
+    "D": {
+      "tag": "forge:gems/diamond"
+    },
+    "L": {
+      "tag": "forge:gems/lapis"
+    },
+    "C": {
+      "item": "minecraft:clock"
+    },
+    "B": {
+      "item": "minecraft:glass_bottle"
+    }
+  },
+  "result": {
+    "item": "tiab:time_in_a_bottle"
+  }
+}
