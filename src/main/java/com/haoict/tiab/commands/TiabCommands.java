@@ -2,7 +2,7 @@ package com.haoict.tiab.commands;
 
 import com.haoict.tiab.config.Constants;
 import com.haoict.tiab.config.TiabConfig;
-import com.haoict.tiab.items.ItemTimeInABottle;
+import com.haoict.tiab.items.TimeInABottleItem;
 import com.haoict.tiab.utils.SendMessage;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
@@ -43,8 +43,8 @@ public class TiabCommands {
                 for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
                     ItemStack invStack = player.getInventory().getItem(i);
                     Item item = invStack.getItem();
-                    if (item instanceof ItemTimeInABottle) {
-                        ItemTimeInABottle itemTiab = (ItemTimeInABottle) item;
+                    if (item instanceof TimeInABottleItem) {
+                        TimeInABottleItem itemTiab = (TimeInABottleItem) item;
                         int currentStoredEnergy = itemTiab.getStoredEnergy(invStack);
 
                         if (!isAdd) {
