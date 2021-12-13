@@ -4,7 +4,6 @@ import com.haoict.tiab.config.Constants;
 import com.haoict.tiab.config.TiabConfig;
 import com.haoict.tiab.entities.TimeAcceleratorEntity;
 import com.haoict.tiab.utils.PlaySound;
-import net.minecraft.client.renderer.texture.Tickable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -42,7 +41,7 @@ public abstract class AbstractTiabItem extends Item {
         ItemStack stack = context.getItemInHand();
         Player player = context.getPlayer();
 
-        if (!blockState.isRandomlyTicking() && (targetTE == null || !(targetTE instanceof Tickable || targetTE instanceof BlockEntity))) {
+        if (targetTE == null && !blockState.isRandomlyTicking()) {
             return InteractionResult.FAIL;
         }
 

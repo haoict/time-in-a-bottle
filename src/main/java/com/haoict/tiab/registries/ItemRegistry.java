@@ -10,5 +10,5 @@ import net.minecraftforge.registries.RegistryObject;
 public class ItemRegistry {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, Constants.MOD_ID);
 
-    public static final RegistryObject<Item> timeInABottleItem = ITEMS.register("time_in_a_bottle", () -> new TimeInABottleItem());
+    public static final RegistryObject<Item> timeInABottleItem = ITEMS.register("time_in_a_bottle", TimeInABottleItem::new);
 }

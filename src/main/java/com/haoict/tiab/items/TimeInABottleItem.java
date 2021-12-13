@@ -37,11 +37,9 @@ public class TimeInABottleItem extends AbstractTiabItem {
 
         // remove time if player has other TIAB items in his inventory, check every 10 sec
         if (level.getGameTime() % (Constants.TICK_CONST * 10) == 0) {
-            if (!(entity instanceof Player)) {
+            if (!(entity instanceof Player player)) {
                 return;
             }
-
-            Player player = (Player) entity;
 
             for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
                 ItemStack invStack = player.getInventory().getItem(i);
