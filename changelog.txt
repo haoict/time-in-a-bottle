@@ -1,3 +1,9 @@
+Build: 2.2.0 - 2021/12/20
+- Add Time in a bottle FE (consumes FE instead of collected time). The item is disabled by default (can be enabled in tiab-common.toml)
+
+Build: 2.1.0 - 2021/12/12
+- Refactor code, upgrade to mc 1.18.1 & forge 39.0
+
 Build: 2.0.0 - 2021/12/12
 - Initial port to Minecraft 1.18
 

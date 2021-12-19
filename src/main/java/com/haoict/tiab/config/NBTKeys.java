@@ -8,4 +8,7 @@ public class NBTKeys {
     public static final String ENTITY_TIME_RATE = "timeRate";
     public static final String ENTITY_REMAINING_TIME = "remainingTime";
     public static final String ENTITY_POS = "position";
+
+    // for time in a bottle FE
+    public static final String ENERGY = "energy";
 }
