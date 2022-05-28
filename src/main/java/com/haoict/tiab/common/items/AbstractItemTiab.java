@@ -14,12 +14,15 @@ import net.minecraft.item.ItemUseContext;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public abstract class AbstractItemTiab extends Item {
   private static final int THIRTY_SECONDS = Constants.TICK_CONST * TiabConfig.COMMON.eachUseDuration.get();
@@ -44,7 +47,16 @@ public abstract class AbstractItemTiab extends Item {
     ItemStack stack = context.getItem();
     PlayerEntity player = context.getPlayer();
 
-    if (!blockState.ticksRandomly() && (targetTE == null || !(targetTE instanceof ITickableTileEntity))) {
+    List<? extends String> blacklistedTags = TiabConfig.COMMON.blacklistedTags.get();
+    Set<ResourceLocation> blockTags = blockState.getBlock().getTags();
+
+    for (ResourceLocation resourceLocation : blockTags) {
+      if (blacklistedTags.contains(resourceLocation.toString())) {
+        return ActionResultType.FAIL;
+      }
+    }
+
+    if (!blockState.ticksRandomly() && !(targetTE instanceof ITickableTileEntity)) {
       return ActionResultType.FAIL;
     }
 
