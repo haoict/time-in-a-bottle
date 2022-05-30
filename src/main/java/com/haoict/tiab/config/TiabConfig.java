@@ -7,6 +7,13 @@ import net.minecraftforge.common.ForgeConfigSpec.IntValue;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
+import org.codehaus.plexus.util.StringUtils;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /*
  * IMPORTANT: DON'T Reformat and rearrange code on this file
@@ -35,6 +42,7 @@ public class TiabConfig {
     public final IntValue timeChargerMaxFE;
     public final IntValue timeChargerMaxIO;
 
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> blacklistedTags;
     private Common() {
       COMMON_BUILDER.push("Time In A Bottle");
 
@@ -89,6 +97,14 @@ public class TiabConfig {
       timeChargerMaxIO = COMMON_BUILDER
           .comment("Define max FE/RF input/output")
           .defineInRange("Max FE Input/Output", 2500, 10, 622080000);
+
+      COMMON_BUILDER.pop();
+
+      COMMON_BUILDER.push("Tags Blacklist");
+
+     blacklistedTags = COMMON_BUILDER
+              .comment("Define tags TIAB will not operate on.")
+              .defineListAllowEmpty(Collections.singletonList("Tag Blacklist"), ArrayList::new, o -> !StringUtils.isEmpty(o.toString()));
 
       COMMON_BUILDER.pop();
     }
