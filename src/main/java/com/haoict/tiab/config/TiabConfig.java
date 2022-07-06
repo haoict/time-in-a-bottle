@@ -3,10 +3,10 @@ package com.haoict.tiab.config;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.Builder;
 import net.minecraftforge.common.ForgeConfigSpec.IntValue;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
 
-@Mod.EventBusSubscriber
+@EventBusSubscriber
 public class TiabConfig {
     public static final Builder COMMON_BUILDER = new Builder();
 

@@ -7,6 +7,7 @@ import com.haoict.tiab.utils.PlaySound;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
@@ -22,7 +23,7 @@ public abstract class AbstractTiabItem extends Item {
     private static final String[] NOTES = {"C", "D", "E", "F", "G2", "A2", "B2", "C2", "D2", "E2", "F2"};
 
     public AbstractTiabItem() {
-        super(new Properties().tab(TiabCreativeTab.TAB).stacksTo(1));
+        super(new Properties().tab(CreativeModeTab.TAB_MISC).stacksTo(1));
     }
 
     @Override
