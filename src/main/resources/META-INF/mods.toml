@@ -1,6 +1,6 @@
 modLoader="javafml" #mandatory
 license="MIT"
-loaderVersion="[39,)" #mandatory
+loaderVersion="[41,)" #mandatory
 
 [[mods]] #mandatory
 modId="tiab" #mandatory

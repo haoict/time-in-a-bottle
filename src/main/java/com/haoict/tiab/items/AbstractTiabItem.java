@@ -19,11 +19,10 @@ import javax.annotation.Nonnull;
 import java.util.Optional;
 
 public abstract class AbstractTiabItem extends Item {
-    private static final int THIRTY_SECONDS = Constants.TICK_CONST * TiabConfig.COMMON.eachUseDuration.get();
     private static final String[] NOTES = {"C", "D", "E", "F", "G2", "A2", "B2", "C2", "D2", "E2", "F2"};
 
     public AbstractTiabItem() {
-        super(new Item.Properties().tab(TiabCreativeTab.TAB).stacksTo(1));
+        super(new Properties().tab(TiabCreativeTab.TAB).stacksTo(1));
     }
 
     @Override
@@ -54,7 +53,7 @@ public abstract class AbstractTiabItem extends Item {
         if (o.isPresent()) {
             TimeAcceleratorEntity entityTA = o.get();
             int currentRate = entityTA.getTimeRate();
-            int usedUpTime = THIRTY_SECONDS - entityTA.getRemainingTime();
+            int usedUpTime = getEachUseDuration() - entityTA.getRemainingTime();
 
             if (currentRate >= Math.pow(2, TiabConfig.COMMON.maxTimeRatePower.get() - 1)) {
                 return InteractionResult.SUCCESS;
@@ -77,7 +76,7 @@ public abstract class AbstractTiabItem extends Item {
             }
 
             TimeAcceleratorEntity entityTA = new TimeAcceleratorEntity(level, pos, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
-            entityTA.setRemainingTime(THIRTY_SECONDS);
+            entityTA.setRemainingTime(getEachUseDuration());
             level.addFreshEntity(entityTA);
         }
 
@@ -89,9 +88,13 @@ public abstract class AbstractTiabItem extends Item {
         return InteractionResult.SUCCESS;
     }
 
+    protected int getEachUseDuration() {
+        return Constants.TICK_CONST * TiabConfig.COMMON.eachUseDuration.get();
+    }
+
     public int getEnergyCost(int timeRate) {
-        if (timeRate <= 1) return THIRTY_SECONDS;
-        return timeRate / 2 * THIRTY_SECONDS;
+        if (timeRate <= 1) return getEachUseDuration();
+        return timeRate / 2 * getEachUseDuration();
     }
 
     public boolean canUse(ItemStack stack, boolean isCreativeMode, int energyRequired) {

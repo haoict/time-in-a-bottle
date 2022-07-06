@@ -33,6 +33,11 @@ public class TimeInABottleItem extends AbstractTiabItem {
             if (storedTime < TiabConfig.COMMON.maxStoredTime.get()) {
                 this.setStoredEnergy(itemStack, storedTime + Constants.TICK_CONST);
             }
+
+            int totalAccumulatedTime = this.getTotalAccumulatedTime(itemStack);
+            if (totalAccumulatedTime < TiabConfig.COMMON.maxStoredTime.get()) {
+                this.setTotalAccumulatedTime(itemStack, totalAccumulatedTime + Constants.TICK_CONST);
+            }
         }
 
         // remove time if player has other TIAB items in his inventory, check every 10 sec
@@ -67,7 +72,14 @@ public class TimeInABottleItem extends AbstractTiabItem {
         int minutes = (storedSeconds % 3600) / 60;
         int seconds = storedSeconds % 60;
 
+        int totalAccumulatedTime = this.getTotalAccumulatedTime(itemStack);
+        int totalAccumulatedTimeSeconds = totalAccumulatedTime / Constants.TICK_CONST;
+        int totalAccumulatedHours = totalAccumulatedTimeSeconds / 3600;
+        int totalAccumulatedMinutes = (totalAccumulatedTimeSeconds % 3600) / 60;
+        int totalAccumulatedSeconds = totalAccumulatedTimeSeconds % 60;
+
         tooltip.add(Translation.TOOLTIP_STORED_TIME.componentTranslation(String.format("%02d", hours), String.format("%02d", minutes), String.format("%02d", seconds)).setStyle(Styles.GREEN));
+        tooltip.add(Translation.TOOLTIP_TOTAL_ACCUMULATED_TIME.componentTranslation(String.format("%02d", totalAccumulatedHours), String.format("%02d", totalAccumulatedMinutes), String.format("%02d", totalAccumulatedSeconds)).setStyle(Styles.GRAY));
     }
 
     @Override
@@ -86,4 +98,12 @@ public class TimeInABottleItem extends AbstractTiabItem {
         setStoredEnergy(stack, getStoredEnergy(stack) - damage);
     }
 
+    public int getTotalAccumulatedTime(ItemStack stack) {
+        return stack.getOrCreateTag().getInt(NBTKeys.TOTAL_ACCUMULATED_TIME);
+    }
+
+    public void setTotalAccumulatedTime(ItemStack stack, int value) {
+        int newValue = Math.min(value, TiabConfig.COMMON.maxStoredTime.get());
+        stack.getOrCreateTag().putInt(NBTKeys.TOTAL_ACCUMULATED_TIME, newValue);
+    }
 }
