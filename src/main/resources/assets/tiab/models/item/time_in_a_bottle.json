@@ -1,6 +1,6 @@
 {
     "parent": "item/generated",
     "textures": {
-        "layer0": "tiab:items/time_in_a_bottle"
+        "layer0": "tiab:item/time_in_a_bottle"
     }
 }
