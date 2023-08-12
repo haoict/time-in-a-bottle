@@ -23,7 +23,7 @@ public abstract class AbstractTiabItem extends Item {
     private static final String[] NOTES = {"C", "D", "E", "F", "G2", "A2", "B2", "C2", "D2", "E2", "F2"};
 
     public AbstractTiabItem() {
-        super(new Properties().tab(CreativeModeTab.TAB_MISC).stacksTo(1));
+        super(new Properties().stacksTo(1));
     }
 
     @Override
@@ -147,6 +147,6 @@ public abstract class AbstractTiabItem extends Item {
 
     @Override
     public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
-        return !ItemStack.isSame(oldStack, newStack);
+        return !ItemStack.isSameItem(oldStack, newStack);
     }
 }

@@ -9,8 +9,11 @@ import com.haoict.tiab.registries.ItemRegistry;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.commands.Commands;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -39,6 +42,7 @@ public class Tiab
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::clientSetup);
+        modEventBus.addListener(this::CreativeTab);
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
@@ -63,5 +67,10 @@ public class Tiab
     public void onServerStarting(ServerStartingEvent event)
     {
         event.getServer().getCommands().getDispatcher().register(Commands.literal(Constants.MOD_ID).then(TiabCommands.addTimeCommand).then(TiabCommands.removeTimeCommand));
+    }
+
+    public void CreativeTab(BuildCreativeModeTabContentsEvent event) {
+        if (event.getTabKey() != CreativeModeTabs.TOOLS_AND_UTILITIES) return;
+        event.accept(ItemRegistry.timeInABottleItem);
     }
 }

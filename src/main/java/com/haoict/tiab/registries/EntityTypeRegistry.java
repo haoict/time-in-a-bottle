@@ -10,7 +10,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 public class EntityTypeRegistry {
-    public static final DeferredRegister<EntityType<?>> TILE_ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITIES, Constants.MOD_ID);
+    public static final DeferredRegister<EntityType<?>> TILE_ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, Constants.MOD_ID);
 
     public static RegistryObject<EntityType<TimeAcceleratorEntity>> timeAcceleratorEntityType =
             TILE_ENTITIES.register("time_accelerator_entity_type", () -> EntityType.Builder.<TimeAcceleratorEntity>of(TimeAcceleratorEntity::new, MobCategory.MISC)
